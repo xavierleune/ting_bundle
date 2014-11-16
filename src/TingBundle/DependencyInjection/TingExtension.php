@@ -7,7 +7,6 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
 
-
 class TingExtension extends Extension
 {
 
@@ -32,15 +31,15 @@ class TingExtension extends Extension
         unset($config['memcached']['persistent_id']);
 
         foreach ($options as $data) {
-        	if (defined($data['key']) === true) {
-        		$data['key'] = constant($data['key']);
-        	}
+            if (defined($data['key']) === true) {
+                $data['key'] = constant($data['key']);
+            }
 
-        	if (defined($data['value']) === true) {
-        		$data['value'] = constant($data['value']);
-        	}
+            if (defined($data['value']) === true) {
+                $data['value'] = constant($data['value']);
+            }
 
-        	$config['memcached']['options'][$data['key']] = $data['value'];
+            $config['memcached']['options'][$data['key']] = $data['value'];
         }
 
         $container->setParameter('ting.memcached', $config['memcached']);
