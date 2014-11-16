@@ -5,7 +5,7 @@ Installation
 
 2. Clone Ting into vendor/ccmbenchmark/Ting
 
-3. Add the following lines to your projects autoload.php file:
+3. Add the following lines to your project autoload.php file:
 ```
 #!php
 
