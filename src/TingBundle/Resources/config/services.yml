@@ -1,0 +1,35 @@
+services:
+    ting_metadatarepository:
+        class: CCMBenchmark\Ting\MetadataRepository
+        arguments: ["@=service('ting_metadatafactory')"]
+
+    ting_queryfactory:
+        class: CCMBenchmark\Ting\Query\QueryFactory
+
+    ting_connectionpool:
+        class: CCMBenchmark\Ting\ConnectionPool
+
+    ting_unitofwork:
+        class: CCMBenchmark\Ting\UnitOfWork
+        arguments: ["@=service('ting_connectionpool')", "@=service('ting_metadatarepository')", "@=service('ting_queryfactory')"]
+
+    ting_hydrator:
+        class: CCMBenchmark\Ting\Repository\Hydrator
+        arguments: ["@=service('ting_metadatarepository')", "@=service('ting_unitofwork')"]
+
+    ting_collectionfactory:
+        class: CCMBenchmark\Ting\Repository\CollectionFactory
+        arguments: ["@=service('ting_hydrator')"]
+
+    ting_cache_memcached:
+        synthetic: true
+
+    ting:
+        class: CCMBenchmark\Ting\Repository\RepositoryFactory
+        arguments:
+            - "@=service('ting_connectionpool')"
+            - "@=service('ting_metadatarepository')"
+            - "@=service('ting_queryfactory')"
+            - "@=service('ting_collectionfactory')"
+            - "@=service('ting_unitofwork')"
+            - "@=service('ting_cache_memcached')"
