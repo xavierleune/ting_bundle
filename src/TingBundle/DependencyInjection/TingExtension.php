@@ -21,5 +21,25 @@ class TingExtension extends Extension
 
         $container->setParameter('ting.repositories', $config['repositories']);
         $container->setParameter('ting.connections', $config['connections']);
+
+        $servers = $config['memcached']['servers'];
+        $config['memcached']['servers'] = array_values($servers);
+
+        $options = $config['memcached']['options'];
+        $config['memcached']['options'] = [];
+
+        foreach ($options as $data) {
+        	if (defined($data['key']) === true) {
+        		$data['key'] = constant($data['key']);
+        	}
+
+        	if (defined($data['value']) === true) {
+        		$data['value'] = constant($data['value']);
+        	}
+
+        	$config['memcached']['options'][$data['key']] = $data['value'];
+        }
+
+        $container->setParameter('ting.memcached', $config['memcached']);
     }
 }
