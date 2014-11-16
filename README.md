@@ -1,9 +1,13 @@
 Installation
 ============
 
-1. Clone Ting into vendor/ccmbenchmark/Ting
+1. Clone this repository into  vendor/ccmbenchmark/TingBundle
 
-2. Add the following lines to your projects autoload.php file:
+2. Clone Ting into vendor/ccmbenchmark/Ting
+
+3. Add the following lines to your projects autoload.php file:
+```
+#!php
 
         $loader->addPsr4(
             'CCMBenchmark\\TingBundle\\',
@@ -14,14 +18,19 @@ Installation
             'CCMBenchmark\\Ting\\',
             __DIR__ . '/../vendor/ccmbenchmark/Ting/src/Ting'
         );
+```
 
-3. Load Bundle in AppKernel
+4. Load Bundle in AppKernel.php
+```
+#!php
 
         new CCMBenchmark\TingBundle\TingBundle(),
-
+```
 
 Configuration
 =============
+```
+#!yaml
 
     ting:
         repositories:
@@ -48,3 +57,13 @@ Configuration
                         user:     world_sample_ro
                         password: world_sample_ro
                         port:     3306
+```
+
+Utilisation
+===========
+From your controller call
+```
+#!php
+
+    $this->container->get('ting')->get('\Acme\DemoBundle\Entity\AcmeRepository');
+```
