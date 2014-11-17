@@ -1,5 +1,6 @@
 {
     "name": "ccmbenchmark/ting_bundle",
+    "description" : "Symfony 2 bundle for ccmbenchmark/ting",
     "type": "library",
     "license": "Apache-2.0",
     "require": {
@@ -7,7 +8,7 @@
     },
     "autoload": {
         "psr-4" : {
-            "CCMBenchmark\\": "src/"
+            "CCMBenchmark\\TingBundle\\": "src/TingBundle/"
         }
     }
 }
