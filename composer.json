@@ -1,0 +1,14 @@
+{
+    "name": "ccmbenchmark/ting_bundle",
+    "type": "library",
+    "license": "Apache-2.0",
+    "require": {
+        "php": ">=5.4"
+    },
+    "autoload": {
+        "psr-4" : {
+            "CCMBenchmark\\": "src/"
+        }
+    }
+}
+
