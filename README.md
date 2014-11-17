@@ -1,26 +1,11 @@
 Installation
 ============
 
-1. Clone this repository into  vendor/ccmbenchmark/TingBundle
+1. Add Ting's Bundle repository to symfony with ```composer config repositories.ting_bundle git git@bitbucket.org:ccmbenchmark/ting_bundle.git```
 
-2. Clone Ting into vendor/ccmbenchmark/Ting
+2. Require Ting Bundle with ```composer require ccmbenchmark/ting_bundle dev-master```
 
-3. Add the following lines to your project autoload.php file:
-```
-#!php
-
-        $loader->addPsr4(
-            'CCMBenchmark\\TingBundle\\',
-            __DIR__ . '/../vendor/ccmbenchmark/TingBundle/src/TingBundle'
-        );
-
-        $loader->addPsr4(
-            'CCMBenchmark\\Ting\\',
-            __DIR__ . '/../vendor/ccmbenchmark/Ting/src/Ting'
-        );
-```
-
-4. Load Bundle in AppKernel.php
+3. Load Bundle in AppKernel.php
 ```
 #!php
 
@@ -71,11 +56,11 @@ Configuration
                 - { key: Memcached::OPT_PREFIX_KEY, value: acme- }
 ```
 
-Utilisation
+Usage
 ===========
 From your controller call
 ```
 #!php
 
-    $this->container->get('ting')->get('\Acme\DemoBundle\Entity\AcmeRepository');
+    $this->get('ting')->get('\Acme\DemoBundle\Entity\AcmeRepository');
 ```
