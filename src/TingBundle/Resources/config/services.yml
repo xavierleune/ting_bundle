@@ -8,6 +8,10 @@ services:
 
     ting_connectionpool:
         class: CCMBenchmark\Ting\ConnectionPool
+        arguments: [@?ting_driverlogger]
+
+    ting_driverlogger:
+        synthetic: true
 
     ting_unitofwork:
         class: CCMBenchmark\Ting\UnitOfWork
