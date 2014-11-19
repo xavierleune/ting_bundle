@@ -5,7 +5,7 @@
     "license": "Apache-2.0",
     "require": {
         "php": ">=5.4",
-        "ccmbenchmark/ting": "1.0-beta"
+        "ccmbenchmark/ting": "dev-feature/FAS-18-integration-debugbar"
     },
     "autoload": {
         "psr-4" : {
@@ -15,8 +15,10 @@
     "repositories": {
         "ting": {
             "type": "git",
-            "url": "git@bitbucket.org:ccmbenchmark/ting.git"
+            "url": "/var/www/ting/"
         }
-    }
+    },
+    "minimum-stability" : "dev",
+    "prefer-stable": true
 }
 
