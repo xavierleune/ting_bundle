@@ -2,7 +2,7 @@
 
 namespace CCMBenchmark\TingBundle\Logger;
 
-use CCMBenchmark\Ting\Logger\Driver\DriverLoggerInterface;
+use CCMBenchmark\Ting\Logger\DriverLoggerInterface;
 
 class DriverLogger implements DriverLoggerInterface
 {
