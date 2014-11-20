@@ -1,15 +1,18 @@
 Installation
 ============
 
-1. Add Ting's Bundle repository to symfony with ```composer config repositories.ting_bundle git git@bitbucket.org:ccmbenchmark/ting_bundle.git```
+1. Add Ting's Bundle repository to symfony with 
 
-2. Require Ting Bundle with ```composer require ccmbenchmark/ting_bundle dev-master```
+```composer config repositories.ting_bundle git git@bitbucket.org:ccmbenchmark/ting_bundle.git```
+
+2. Require Ting Bundle with 
+
+```composer require ccmbenchmark/ting_bundle dev-master```
 
 3. Load Bundle in AppKernel.php
 ```
 #!php
-
-        new CCMBenchmark\TingBundle\TingBundle(),
+new CCMBenchmark\TingBundle\TingBundle(),
 ```
 
 Configuration
