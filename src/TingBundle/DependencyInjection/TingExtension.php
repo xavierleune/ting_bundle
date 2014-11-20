@@ -60,8 +60,8 @@ class TingExtension extends Extension
             $definition->addArgument($reference);
 
             // Add logger to DataCollector
-            $definition = $container->getDefinition('ting_data_collector');
-            $definition->addMethodCall('setLogger', [$reference]);
+            $definition = $container->getDefinition('ting_driver_data_collector');
+            $definition->addMethodCall('setDriverLogger', [$reference]);
         }
 
         $servers = $config['memcached']['servers'];
@@ -88,5 +88,23 @@ class TingExtension extends Extension
         // Definition of ting_cache_memcached service
         $definition = $container->getDefinition('ting_cache');
         $definition->addMethodCall('setConfig', [$config['memcached']]);
+
+        if ($container->hasParameter('ting_cachelogger_class') === true) {
+            $definition = new Definition($container->getParameter('ting_cachelogger_class'));
+            $definition->addArgument(new Reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE));
+            $definition->addArgument(new Reference('debug.stopwatch', ContainerInterface::NULL_ON_INVALID_REFERENCE));
+            $container->setDefinition('ting_cachelogger', $definition);
+
+            $reference = new Reference('ting_cachelogger');
+
+            // Add logger to connection Pool
+            $definition = $container->getDefinition('ting_cache');
+            $definition->addMethodCall('setLogger', [$reference]);
+
+            // Add logger to DataCollector
+            $definition = $container->getDefinition('ting_cache_data_collector');
+            $definition->addMethodCall('setCacheLogger', [$reference]);
+        }
+
     }
 }
