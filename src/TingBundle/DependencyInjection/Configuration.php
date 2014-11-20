@@ -72,7 +72,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->arrayNode('memcached')
                     ->children()
-                        ->scalarNode('persistentId')
+                        ->scalarNode('persistent_id')
                             ->isRequired()
                         ->end()
                         ->arrayNode('servers')
