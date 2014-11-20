@@ -6,6 +6,9 @@ services:
     ting_queryfactory:
         class: CCMBenchmark\Ting\Query\QueryFactory
 
+    ting_driverlogger:
+        synthetic: true
+
     ting_connectionpool:
         class: CCMBenchmark\Ting\ConnectionPool
 
@@ -21,8 +24,13 @@ services:
         class: CCMBenchmark\Ting\Repository\CollectionFactory
         arguments: ["@=service('ting_hydrator')"]
 
-    ting_cache_memcached:
-        synthetic: true
+    ting_cache:
+        class: CCMBenchmark\Ting\Cache\Memcached
+
+    ting_data_collector:
+        class: CCMBenchmark\TingBundle\DataCollector\TingBundleDataCollector
+        tags:
+            - {name: data_collector, template:"TingBundle:Collector:collector", id:"ting_bundle"}
 
     ting:
         class: CCMBenchmark\Ting\Repository\RepositoryFactory
@@ -32,4 +40,4 @@ services:
             - "@=service('ting_queryfactory')"
             - "@=service('ting_collectionfactory')"
             - "@=service('ting_unitofwork')"
-            - "@=service('ting_cache_memcached')"
+            - "@=service('ting_cache')"

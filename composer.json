@@ -5,9 +5,8 @@
     "license": "Apache-2.0",
     "require": {
         "php": ">=5.4",
-        "ccmbenchmark/ting": "1.0.*@beta"
+        "ccmbenchmark/ting": "dev-master"
     },
-    "minimum-stability": "beta",
     "autoload": {
         "psr-4" : {
             "CCMBenchmark\\TingBundle\\": "src/TingBundle/"
@@ -18,6 +17,8 @@
             "type": "git",
             "url": "git@bitbucket.org:ccmbenchmark/ting.git"
         }
-    }
+    },
+    "minimum-stability" : "dev",
+    "prefer-stable": true
 }
 
