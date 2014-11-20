@@ -48,9 +48,6 @@ class TingExtension extends Extension
         $options = $config['memcached']['options'];
         $config['memcached']['options'] = [];
 
-        $config['memcached']['persistentId'] = $config['memcached']['persistent_id'];
-        unset($config['memcached']['persistent_id']);
-
         foreach ($options as $data) {
             if (defined($data['key']) === true) {
                 $data['key'] = constant($data['key']);
@@ -64,5 +61,10 @@ class TingExtension extends Extension
         }
 
         $container->setParameter('ting.memcached', $config['memcached']);
+
+
+        // Definition of ting_cache_memcached service
+        $definition = $container->getDefinition('ting_cache');
+        $definition->addMethodCall('setConfig', [$config['memcached']]);
     }
 }
