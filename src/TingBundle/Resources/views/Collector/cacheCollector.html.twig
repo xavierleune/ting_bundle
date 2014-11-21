@@ -1,10 +1,7 @@
 {% extends 'WebProfilerBundle:Profiler:layout.html.twig' %}
-{#
-@TODO change icons from driver to cache
-#}
 {% block toolbar %}
     {% set icon %}
-    <img width="20" height="28" alt="Database" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQRJREFUeNpi/P//PwM1ARMDlcGogZQDlpMnT7pxc3NbA9nhQKxOpL5rQLwJiPeBsI6Ozl+YBOOOHTv+AOllQNwtLS39F2owKYZ/gRq8G4i3ggxEToggWzvc3d2Pk+1lNL4fFAs6ODi8JzdS7mMRVyDVoAMHDsANdAPiOCC+jCQvQKqBQB/BDbwBxK5AHA3E/kB8nKJkA8TMQBwLxaBIKQbi70AvTADSBiSadwFXpCikpKQU8PDwkGTaly9fHFigkaKIJid4584dkiMFFI6jkTJII0WVmpHCAixZQEXWYhDeuXMnyLsVlEQKI45qFBQZ8eRECi4DBaAlDqle/8A48ip6gAADANdQY88Uc0oGAAAAAElFTkSuQmCC" />
+    <img width="20" height="28" alt="Cache" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAACTpAAAk6QFQJOf4AAAAB3RJTUUH3gsVCTErkceEPgAAAqJJREFUSMftlT1oFEEUx9983N5m5u425BISiXBICJpGyBmRNGKhlbFTRIMgSEiljYX2KqawEC2DoIWkEgXt7ARRiKSxOEJSGM/EQHJsdmfnbm93dp+NF4IfyQVtIv6rB/Pmx5s3j/8D+K9/X2S7s1KpVCwUCocopQ+TJJkjhNyr1WpfVlZW1G6AtFQqnXQc56wQ4jjn/CDnHAAAoigCRJz1ff+N7/vPq9Xq222Bg4ODN2zbnnAcZ4Axtu3T4jhG3/crYRjeX1xcnN4EDg0NHRNCTFBKL2WzWYtzDojYXr8IAWMMhGFYB4AnQRA8psaYZWNMWUq5KxgAACIC5xyklCKKoiNJknymjLFbhJCL8/PzJ3zfnzPG6HagiAjGGOV53vtKpTJCKb3MGLtLyuVyUwhhJUnyznXdZ2EYLnV3d+8HgDsdHR2CMbZZNSEE4jiGMAzXGWPXV1dXfSHEga6urnOU0tF6vR5xRGxyzi3G2GhfX9+o1rqplHrVaDQGMpnMZKFQuJrL5YoAgK7rftJa347j+IWUcrq3t/e0lDKLiEAIAURskuHhYd9xnPzWKhARwjCEKIqeNhqNGWPMQWNMVUq5blnWpGVZ523b3sxt3fM8T/Ff9QYAwLZtsG173Lbtca31YUIICiE+Wpb1U+5W8Z2azxgDSqnVincSb3c82hX92+awB4CI6KZp+segNE0BEV2qlBrzPG9Ka63TNAVCSPtmSgikaQpa67rneVNKqbEf7eumlPJaZ2fnvtbPJkkCSqkRAIB8Pv+hNTqEENjY2PiqtX6wsLAw9VuDzeVy+Z6enjPFYvEC5/xUJpPJBkFw9PvZbBzHTWPM61qtNrO2tvYyCALV1grI5/NWf39/iXN+xRjzCACgFS8vLy8ppaK9ufW+AQhETOxlVFxvAAAAAElFTkSuQmCC" />
     <span class="sf-toolbar-status{% if 50 < collector.cacheOperationsCount %} sf-toolbar-status-yellow{% endif %}">{{ collector.cacheOperationsCount }}</span>
     {% if collector.cacheOperationsCount > 0 %}
         <span class="sf-toolbar-info-piece-additional-detail">in {{ '%0.2f'|format(collector.cacheTotalTime) }} ms</span>
@@ -39,7 +36,7 @@
 
 {% block menu %}
     <span class="label">
-    <span class="icon"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAcCAYAAAB/E6/TAAABLUlEQVR42u3TP0vDQBiA8UK/gDiLzi0IhU4OEunk5OQUAhGSOBUCzqWfIKSzX8DRySF0URCcMjWLIJjFD9Cpk/D6HITecEPUuzhIAz8CIdyTP/f2iqI4qaqqDx8l5Ic2uIeP/bquezCokOAFF+oCN3t4gPzSEjc4NEPaCldQbzjELTYW0RJzHDchwwem+ons6ZBpLSJ7nueJC22h0V+FzmwWV0ee59vQNV67CGVZJmEYbkNjfpY6X6I0Qo4/3RMmTdDDspuQVsJvgkP3IdMbIkIjLPBoadG2646iKJI0Ta2wxm6OdnP0/Tk6DYJgHcfxpw21RtscDTDDnaVZ26474GkkSRIrrPEv5sgMTfHe+cA2O6wPH6vOBpYQNALneHb96XTEDI6dzpEZ0VzO0Rf3pP5LMLI4tAAAAABJRU5ErkJggg==" alt="" /></span>
+    <span class="icon"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAACTpAAAk6QFQJOf4AAAAB3RJTUUH3gsVCTErkceEPgAAAqJJREFUSMftlT1oFEEUx9983N5m5u425BISiXBICJpGyBmRNGKhlbFTRIMgSEiljYX2KqawEC2DoIWkEgXt7ARRiKSxOEJSGM/EQHJsdmfnbm93dp+NF4IfyQVtIv6rB/Pmx5s3j/8D+K9/X2S7s1KpVCwUCocopQ+TJJkjhNyr1WpfVlZW1G6AtFQqnXQc56wQ4jjn/CDnHAAAoigCRJz1ff+N7/vPq9Xq222Bg4ODN2zbnnAcZ4Axtu3T4jhG3/crYRjeX1xcnN4EDg0NHRNCTFBKL2WzWYtzDojYXr8IAWMMhGFYB4AnQRA8psaYZWNMWUq5KxgAACIC5xyklCKKoiNJknymjLFbhJCL8/PzJ3zfnzPG6HagiAjGGOV53vtKpTJCKb3MGLtLyuVyUwhhJUnyznXdZ2EYLnV3d+8HgDsdHR2CMbZZNSEE4jiGMAzXGWPXV1dXfSHEga6urnOU0tF6vR5xRGxyzi3G2GhfX9+o1rqplHrVaDQGMpnMZKFQuJrL5YoAgK7rftJa347j+IWUcrq3t/e0lDKLiEAIAURskuHhYd9xnPzWKhARwjCEKIqeNhqNGWPMQWNMVUq5blnWpGVZ523b3sxt3fM8T/Ff9QYAwLZtsG173Lbtca31YUIICiE+Wpb1U+5W8Z2azxgDSqnVincSb3c82hX92+awB4CI6KZp+segNE0BEV2qlBrzPG9Ka63TNAVCSPtmSgikaQpa67rneVNKqbEf7eumlPJaZ2fnvtbPJkkCSqkRAIB8Pv+hNTqEENjY2PiqtX6wsLAw9VuDzeVy+Z6enjPFYvEC5/xUJpPJBkFw9PvZbBzHTWPM61qtNrO2tvYyCALV1grI5/NWf39/iXN+xRjzCACgFS8vLy8ppaK9ufW+AQhETOxlVFxvAAAAAElFTkSuQmCC" alt="" /></span>
     <strong>Ting Cache</strong>
     <span class="count">
         <span>{{ collector.cacheOperationsCount }}</span>
