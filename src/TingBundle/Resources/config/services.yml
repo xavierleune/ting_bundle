@@ -27,10 +27,15 @@ services:
     ting_cache:
         class: CCMBenchmark\Ting\Cache\Memcached
 
-    ting_data_collector:
-        class: CCMBenchmark\TingBundle\DataCollector\TingBundleDataCollector
+    ting_driver_data_collector:
+        class: CCMBenchmark\TingBundle\DataCollector\TingDriverDataCollector
         tags:
-            - {name: data_collector, template:"TingBundle:Collector:collector", id:"ting_bundle"}
+            - {name: data_collector, template:"TingBundle:Collector:driverCollector", id:"ting_driver"}
+
+    ting_cache_data_collector:
+        class: CCMBenchmark\TingBundle\DataCollector\TingCacheDataCollector
+        tags:
+            - {name: data_collector, template:"TingBundle:Collector:cacheCollector", id:"ting_cache"}
 
     ting:
         class: CCMBenchmark\Ting\Repository\RepositoryFactory

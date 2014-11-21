@@ -25,17 +25,29 @@
 namespace CCMBenchmark\TingBundle\DataCollector;
 
 
+use CCMBenchmark\Ting\Logger\CacheLoggerInterface;
 use CCMBenchmark\Ting\Logger\DriverLoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 
-class TingBundleDataCollector extends DataCollector
+class TingDriverDataCollector extends DataCollector
 {
     /**
      * @var DriverLoggerInterface|null
      */
     protected $driverLogger = null;
+
+    protected $data = [
+        'driver' => [
+            'queries'               => [],
+            'execs'                 => [],
+            'queryCount'            => 0,
+            'time'                  => 0,
+            'connections'           => [],
+            'connectionsHashToName' => []
+        ]
+    ];
 
     /**
      * Collects data for the given Request and Response.
@@ -49,12 +61,12 @@ class TingBundleDataCollector extends DataCollector
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
         if ($this->driverLogger !== null) {
-            $this->data['queries'] = $this->driverLogger->getQueries();
-            $this->data['execs'] = $this->driverLogger->getExecs();
-            $this->data['queryCount'] = count($this->data['queries']);
-            $this->data['time'] = $this->driverLogger->getTotalTime();
-            $this->data['connections'] = $this->driverLogger->getConnections();
-            $this->data['connectionsHashToName'] = $this->driverLogger->getConnectionsHashToName();
+            $this->data['driver']['queries'] = $this->driverLogger->getQueries();
+            $this->data['driver']['execs'] = $this->driverLogger->getExecs();
+            $this->data['driver']['queryCount'] = count($this->data['driver']['queries']);
+            $this->data['driver']['time'] = $this->driverLogger->getTotalTime();
+            $this->data['driver']['connections'] = $this->driverLogger->getConnections();
+            $this->data['driver']['connectionsHashToName'] = $this->driverLogger->getConnectionsHashToName();
         }
     }
 
@@ -67,41 +79,41 @@ class TingBundleDataCollector extends DataCollector
      */
     public function getName()
     {
-        return 'ting_bundle';
+        return 'ting_driver';
     }
 
-    public function setLogger(DriverLoggerInterface $driverLogger = null)
+    public function setDriverLogger(DriverLoggerInterface $driverLogger = null)
     {
         $this->driverLogger = $driverLogger;
     }
 
     public function getQueryCount()
     {
-        return $this->data['queryCount'];
+        return $this->data['driver']['queryCount'];
     }
 
     public function getQueries()
     {
-        return $this->data['queries'];
+        return $this->data['driver']['queries'];
     }
 
     public function getExecs()
     {
-        return $this->data['execs'];
+        return $this->data['driver']['execs'];
     }
 
     public function getTime()
     {
-        return $this->data['time'];
+        return $this->data['driver']['time'];
     }
 
     public function getConnections()
     {
-        return $this->data['connections'];
+        return $this->data['driver']['connections'];
     }
 
     public function getConnectionsHashToName()
     {
-        return $this->data['connectionsHashToName'];
+        return $this->data['driver']['connectionsHashToName'];
     }
 }

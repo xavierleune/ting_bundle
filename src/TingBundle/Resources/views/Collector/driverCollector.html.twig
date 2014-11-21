@@ -25,7 +25,7 @@
 {% block menu %}
     <span class="label">
     <span class="icon"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAcCAYAAAB/E6/TAAABLUlEQVR42u3TP0vDQBiA8UK/gDiLzi0IhU4OEunk5OQUAhGSOBUCzqWfIKSzX8DRySF0URCcMjWLIJjFD9Cpk/D6HITecEPUuzhIAz8CIdyTP/f2iqI4qaqqDx8l5Ic2uIeP/bquezCokOAFF+oCN3t4gPzSEjc4NEPaCldQbzjELTYW0RJzHDchwwem+ons6ZBpLSJ7nueJC22h0V+FzmwWV0ee59vQNV67CGVZJmEYbkNjfpY6X6I0Qo4/3RMmTdDDspuQVsJvgkP3IdMbIkIjLPBoadG2646iKJI0Ta2wxm6OdnP0/Tk6DYJgHcfxpw21RtscDTDDnaVZ26474GkkSRIrrPEv5sgMTfHe+cA2O6wPH6vOBpYQNALneHb96XTEDI6dzpEZ0VzO0Rf3pP5LMLI4tAAAAABJRU5ErkJggg==" alt="" /></span>
-    <strong>Ting</strong>
+    <strong>Ting Queries</strong>
     <span class="count">
         <span>{{ collector.querycount }}</span>
         <span>{{ '%0.0f'|format(collector.time) }} ms</span>
@@ -65,7 +65,7 @@
                     </p>
                     <pre><code class="language-sql">{{ query['sql']|trim }}</code></pre>
                     {% if query['params'] is defined and query['params'] is not empty %}
-                        {{ dump(query['params']) }}
+                        {{ profiler_dump(query['params']) }}
                     {% endif %}
                     {% if query['type'] == 'statement' %}
                         {% if collector.execs[query['name']] is not defined %}
@@ -75,7 +75,7 @@
                                 {% for j, exec in collector.execs[query['name']] %}
                                     <li class="{{ cycle(['odd', 'even'], j) }}">
                                         <p class="ting_infos"><span class="ting-label"><span>{{ exec['time'] }} ms</span></span></p>
-                                        {{ dump(exec['params']) }}
+                                        {{ profiler_dump(exec['params']) }}
                                     </li>
                                 {% endfor %}
                             </ul>
