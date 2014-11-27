@@ -47,8 +47,8 @@ class TingExtension extends Extension
         $container->setParameter('ting.connections', $config['connections']);
 
         // Adding optional service ting_driverlogger
-        if ($container->hasParameter('ting_driverlogger_class') === true) {
-            $definition = new Definition($container->getParameter('ting_driverlogger_class'));
+        if ($container->getParameter('kernel.debug') === true) {
+            $definition = new Definition('CCMBenchmark\TingBundle\Logger\DriverLogger');
             $definition->addArgument(new Reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE));
             $definition->addArgument(new Reference('debug.stopwatch', ContainerInterface::NULL_ON_INVALID_REFERENCE));
             $container->setDefinition('ting_driverlogger', $definition);
@@ -89,8 +89,8 @@ class TingExtension extends Extension
         $definition = $container->getDefinition('ting_cache');
         $definition->addMethodCall('setConfig', [$config['memcached']]);
 
-        if ($container->hasParameter('ting_cachelogger_class') === true) {
-            $definition = new Definition($container->getParameter('ting_cachelogger_class'));
+        if ($container->getParameter('kernel.debug') === true) {
+            $definition = new Definition('CCMBenchmark\TingBundle\Logger\CacheLogger');
             $definition->addArgument(new Reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE));
             $definition->addArgument(new Reference('debug.stopwatch', ContainerInterface::NULL_ON_INVALID_REFERENCE));
             $container->setDefinition('ting_cachelogger', $definition);
