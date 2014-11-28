@@ -43,6 +43,7 @@ class TingExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $container->setParameter('ting.cache_file', $config['cache_file']);
         $container->setParameter('ting.repositories', $config['repositories']);
         $container->setParameter('ting.connections', $config['connections']);
 

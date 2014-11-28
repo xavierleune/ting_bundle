@@ -37,6 +37,9 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->scalarNode('cache_file')
+                    ->defaultValue('ting.php')
+                ->end()
                 ->arrayNode('repositories')
                     ->prototype('array')
                         ->children()
@@ -45,6 +48,9 @@ class Configuration implements ConfigurationInterface
                             ->end()
                             ->scalarNode('directory')
                                 ->isRequired()
+                            ->end()
+                            ->scalarNode('glob')
+                                ->defaultValue('*Repository.php')
                             ->end()
                         ->end()
                     ->end()
@@ -105,7 +111,7 @@ class Configuration implements ConfigurationInterface
                                         ->isRequired()
                                     ->end()
                                     ->integerNode('port')
-                                        ->isRequired()
+                                        ->defaultValue(11211)
                                     ->end()
                                 ->end()
                             ->end()

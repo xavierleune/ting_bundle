@@ -33,8 +33,17 @@ class TingBundle extends Bundle
     {
         $metadataRepository = $this->container->get('ting_metadatarepository');
 
-        foreach ($this->container->getParameter('ting.repositories') as $bundle) {
-            $metadataRepository->batchLoadMetadata($bundle['namespace'], $bundle['directory']);
+        $cacheFile = $this->container->getParameter('kernel.cache_dir') . '/' .
+            $this->container->getParameter('ting.cache_file');
+
+        if (file_exists($cacheFile)) {
+            $repositories = include($cacheFile);
+            $metadataRepository->batchLoadMetadataFromCache($repositories);
+        } else {
+            foreach ($this->container->getParameter('ting.repositories') as $bundle) {
+                $directory = $this->container->get('fileLocator')->locate($bundle['directory']);
+                $metadataRepository->batchLoadMetadata($bundle['namespace'], $directory . $bundle['glob']);
+            }
         }
 
         $this->container->get('ting_connectionpool')->setConfig($this->container->getParameter('ting.connections'));
