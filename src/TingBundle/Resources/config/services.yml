@@ -46,3 +46,10 @@ services:
             - "@=service('ting_collectionfactory')"
             - "@=service('ting_unitofwork')"
             - "@=service('ting_cache')"
+
+    ting.metadata_warmer:
+        class: CCMBenchmark\TingBundle\Cache\MetadataWarmer
+        arguments:
+            - "@=service('service_container')"
+        tags:
+            - {name: kernel.cache_warmer, priority:0}
