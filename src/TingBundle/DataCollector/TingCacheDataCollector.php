@@ -77,7 +77,7 @@ class TingCacheDataCollector extends DataCollector
      */
     public function getName()
     {
-        return 'ting_cache';
+        return 'ting.cache';
     }
 
     public function setCacheLogger(CacheLoggerInterface $cacheLogger = null)

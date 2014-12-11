@@ -47,21 +47,21 @@ class TingExtension extends Extension
         $container->setParameter('ting.repositories', $config['repositories']);
         $container->setParameter('ting.connections', $config['connections']);
 
-        // Adding optional service ting_driverlogger
+        // Adding optional service ting.driverlogger
         if ($container->getParameter('kernel.debug') === true) {
             $definition = new Definition('CCMBenchmark\TingBundle\Logger\DriverLogger');
             $definition->addArgument(new Reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE));
             $definition->addArgument(new Reference('debug.stopwatch', ContainerInterface::NULL_ON_INVALID_REFERENCE));
-            $container->setDefinition('ting_driverlogger', $definition);
+            $container->setDefinition('ting.driverlogger', $definition);
 
-            $reference = new Reference('ting_driverlogger');
+            $reference = new Reference('ting.driverlogger');
 
             // Add logger to connection Pool
-            $definition = $container->getDefinition('ting_connectionpool');
+            $definition = $container->getDefinition('ting.connectionpool');
             $definition->addArgument($reference);
 
             // Add logger to DataCollector
-            $definition = $container->getDefinition('ting_driver_data_collector');
+            $definition = $container->getDefinition('ting.driver_data_collector');
             $definition->addMethodCall('setDriverLogger', [$reference]);
         }
 
@@ -86,24 +86,24 @@ class TingExtension extends Extension
         $container->setParameter('ting.memcached', $config['memcached']);
 
 
-        // Definition of ting_cache_memcached service
-        $definition = $container->getDefinition('ting_cache');
+        // Definition of ting.cache_memcached service
+        $definition = $container->getDefinition('ting.cache');
         $definition->addMethodCall('setConfig', [$config['memcached']]);
 
         if ($container->getParameter('kernel.debug') === true) {
             $definition = new Definition('CCMBenchmark\TingBundle\Logger\CacheLogger');
             $definition->addArgument(new Reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE));
             $definition->addArgument(new Reference('debug.stopwatch', ContainerInterface::NULL_ON_INVALID_REFERENCE));
-            $container->setDefinition('ting_cachelogger', $definition);
+            $container->setDefinition('ting.cachelogger', $definition);
 
-            $reference = new Reference('ting_cachelogger');
+            $reference = new Reference('ting.cachelogger');
 
             // Add logger to connection Pool
-            $definition = $container->getDefinition('ting_cache');
+            $definition = $container->getDefinition('ting.cache');
             $definition->addMethodCall('setLogger', [$reference]);
 
             // Add logger to DataCollector
-            $definition = $container->getDefinition('ting_cache_data_collector');
+            $definition = $container->getDefinition('ting.cache_data_collector');
             $definition->addMethodCall('setCacheLogger', [$reference]);
         }
 

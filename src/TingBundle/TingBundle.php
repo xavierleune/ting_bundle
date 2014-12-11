@@ -31,7 +31,7 @@ class TingBundle extends Bundle
 
     public function boot()
     {
-        $metadataRepository = $this->container->get('ting_metadatarepository');
+        $metadataRepository = $this->container->get('ting.metadatarepository');
 
         $cacheFile = $this->container->getParameter('kernel.cache_dir') . '/' .
             $this->container->getParameter('ting.cache_file');
@@ -46,6 +46,6 @@ class TingBundle extends Bundle
             }
         }
 
-        $this->container->get('ting_connectionpool')->setConfig($this->container->getParameter('ting.connections'));
+        $this->container->get('ting.connectionpool')->setConfig($this->container->getParameter('ting.connections'));
     }
 }

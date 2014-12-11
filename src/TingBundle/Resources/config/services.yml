@@ -1,51 +1,51 @@
 services:
-    ting_metadatarepository:
+    ting.metadatarepository:
         class: CCMBenchmark\Ting\MetadataRepository
-        arguments: ["@=service('ting_metadatafactory')"]
+        arguments: ["@=service('ting.metadatafactory')"]
 
-    ting_queryfactory:
+    ting.queryfactory:
         class: CCMBenchmark\Ting\Query\QueryFactory
 
-    ting_driverlogger:
+    ting.driverlogger:
         synthetic: true
 
-    ting_connectionpool:
+    ting.connectionpool:
         class: CCMBenchmark\Ting\ConnectionPool
 
-    ting_unitofwork:
+    ting.unitofwork:
         class: CCMBenchmark\Ting\UnitOfWork
-        arguments: ["@=service('ting_connectionpool')", "@=service('ting_metadatarepository')", "@=service('ting_queryfactory')"]
+        arguments: ["@=service('ting.connectionpool')", "@=service('ting.metadatarepository')", "@=service('ting.queryfactory')"]
 
-    ting_hydrator:
+    ting.hydrator:
         class: CCMBenchmark\Ting\Repository\Hydrator
-        arguments: ["@=service('ting_metadatarepository')", "@=service('ting_unitofwork')"]
+        arguments: ["@=service('ting.metadatarepository')", "@=service('ting.unitofwork')"]
 
-    ting_collectionfactory:
+    ting.collectionfactory:
         class: CCMBenchmark\Ting\Repository\CollectionFactory
-        arguments: ["@=service('ting_hydrator')"]
+        arguments: ["@=service('ting.hydrator')"]
 
-    ting_cache:
+    ting.cache:
         class: CCMBenchmark\Ting\Cache\Memcached
 
-    ting_driver_data_collector:
+    ting.driver_data_collector:
         class: CCMBenchmark\TingBundle\DataCollector\TingDriverDataCollector
         tags:
-            - {name: data_collector, template:"TingBundle:Collector:driverCollector", id:"ting_driver"}
+            - {name: data_collector, template:"TingBundle:Collector:driverCollector", id:"ting.driver"}
 
-    ting_cache_data_collector:
+    ting.cache_data_collector:
         class: CCMBenchmark\TingBundle\DataCollector\TingCacheDataCollector
         tags:
-            - {name: data_collector, template:"TingBundle:Collector:cacheCollector", id:"ting_cache"}
+            - {name: data_collector, template:"TingBundle:Collector:cacheCollector", id:"ting.cache"}
 
     ting:
         class: CCMBenchmark\Ting\Repository\RepositoryFactory
         arguments:
-            - "@=service('ting_connectionpool')"
-            - "@=service('ting_metadatarepository')"
-            - "@=service('ting_queryfactory')"
-            - "@=service('ting_collectionfactory')"
-            - "@=service('ting_unitofwork')"
-            - "@=service('ting_cache')"
+            - "@=service('ting.connectionpool')"
+            - "@=service('ting.metadatarepository')"
+            - "@=service('ting.queryfactory')"
+            - "@=service('ting.collectionfactory')"
+            - "@=service('ting.unitofwork')"
+            - "@=service('ting.cache')"
 
     ting.metadata_warmer:
         class: CCMBenchmark\TingBundle\Cache\MetadataWarmer

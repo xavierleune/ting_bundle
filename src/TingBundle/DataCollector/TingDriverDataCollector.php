@@ -79,7 +79,7 @@ class TingDriverDataCollector extends DataCollector
      */
     public function getName()
     {
-        return 'ting_driver';
+        return 'ting.driver';
     }
 
     public function setDriverLogger(DriverLoggerInterface $driverLogger = null)
