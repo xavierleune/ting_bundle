@@ -3,8 +3,10 @@ Installation
 
 1. Add Ting's Bundle and Ting repository to symfony with
 
-```composer config repositories.ting_bundle git git@bitbucket.org:ccmbenchmark/ting_bundle.git```
-```composer config repositories.ting git git@bitbucket.org:ccmbenchmark/ting.git```
+```
+composer config repositories.ting_bundle git git@bitbucket.org:ccmbenchmark/ting_bundle.git
+composer config repositories.ting git git@bitbucket.org:ccmbenchmark/ting.git
+```
 
 2. Require Ting Bundle with
 
