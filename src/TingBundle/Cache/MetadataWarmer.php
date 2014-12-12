@@ -23,11 +23,11 @@ class MetadataWarmer implements CacheWarmerInterface
      */
     public function warmUp($cacheDir)
     {
-        $metadataRepository = $this->container->get('ting_metadatarepository');
+        $metadataRepository = $this->container->get('ting.metadatarepository');
 
         $repositories = [];
         foreach ($this->container->getParameter('ting.repositories') as $bundle) {
-            $directory = $this->container->get('fileLocator')->locate($bundle['directory']);
+            $directory = $this->container->get('file_locator')->locate($bundle['directory']) . '/';
              $repositories = array_merge(
                  $repositories,
                  $metadataRepository->batchLoadMetadata($bundle['namespace'], $directory . $bundle['glob'])
