@@ -1,7 +1,11 @@
 services:
     ting.metadatarepository:
         class: CCMBenchmark\Ting\MetadataRepository
-        arguments: ["@=service('ting.metadatafactory')"]
+        arguments:
+            - @ting.serializerfactory
+
+    ting.serializerfactory:
+        class: CCMBenchmark\Ting\Serializer\SerializerFactory
 
     ting.queryfactory:
         class: CCMBenchmark\Ting\Query\QueryFactory
@@ -14,15 +18,21 @@ services:
 
     ting.unitofwork:
         class: CCMBenchmark\Ting\UnitOfWork
-        arguments: ["@=service('ting.connectionpool')", "@=service('ting.metadatarepository')", "@=service('ting.queryfactory')"]
+        arguments:
+            - @ting.connectionpool
+            - @ting.metadatarepository
+            - @ting.queryfactory
 
     ting.hydrator:
         class: CCMBenchmark\Ting\Repository\Hydrator
-        arguments: ["@=service('ting.metadatarepository')", "@=service('ting.unitofwork')"]
+        arguments:
+            - @ting.metadatarepository
+            - @ting.unitofwork
 
     ting.collectionfactory:
         class: CCMBenchmark\Ting\Repository\CollectionFactory
-        arguments: ["@=service('ting.hydrator')"]
+        arguments:
+            - @ting.hydrator
 
     ting.cache:
         class: CCMBenchmark\Ting\Cache\Memcached
@@ -40,16 +50,17 @@ services:
     ting:
         class: CCMBenchmark\Ting\Repository\RepositoryFactory
         arguments:
-            - "@=service('ting.connectionpool')"
-            - "@=service('ting.metadatarepository')"
-            - "@=service('ting.queryfactory')"
-            - "@=service('ting.collectionfactory')"
-            - "@=service('ting.unitofwork')"
-            - "@=service('ting.cache')"
+            - @ting.connectionpool
+            - @ting.metadatarepository
+            - @ting.queryfactory
+            - @ting.collectionfactory
+            - @ting.unitofwork
+            - @ting.cache
+            - @ting.serializerfactory
 
     ting.metadata_warmer:
         class: CCMBenchmark\TingBundle\Cache\MetadataWarmer
         arguments:
-            - "@=service('service_container')"
+            - @service_container
         tags:
             - {name: kernel.cache_warmer, priority:0}

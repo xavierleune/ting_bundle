@@ -41,7 +41,7 @@ class TingBundle extends Bundle
             $metadataRepository->batchLoadMetadataFromCache($repositories);
         } else {
             foreach ($this->container->getParameter('ting.repositories') as $bundle) {
-                $directory = $this->container->get('fileLocator')->locate($bundle['directory']);
+                $directory = $this->container->get('file_locator')->locate($bundle['directory']) . '/';
                 $metadataRepository->batchLoadMetadata($bundle['namespace'], $directory . $bundle['glob']);
             }
         }
