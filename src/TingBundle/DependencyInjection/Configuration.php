@@ -61,6 +61,8 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('namespace')
                                 ->isRequired()
                             ->end()
+                            ->scalarNode('charset')
+                            ->end()
                             ->arrayNode('master')
                                 ->children()
                                     ->scalarNode('host')
