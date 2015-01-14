@@ -25,13 +25,12 @@ services:
 
     ting.hydrator:
         class: CCMBenchmark\Ting\Repository\Hydrator
-        arguments:
-            - @ting.metadatarepository
-            - @ting.unitofwork
 
     ting.collectionfactory:
         class: CCMBenchmark\Ting\Repository\CollectionFactory
         arguments:
+            - @ting.metadatarepository
+            - @ting.unitofwork
             - @ting.hydrator
 
     ting.cache:
