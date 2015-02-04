@@ -24,7 +24,6 @@
 
 namespace CCMBenchmark\TingBundle\DataCollector;
 
-
 use CCMBenchmark\Ting\Logger\CacheLoggerInterface;
 use CCMBenchmark\Ting\Logger\DriverLoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
