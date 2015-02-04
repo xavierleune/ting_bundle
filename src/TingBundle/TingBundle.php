@@ -42,7 +42,14 @@ class TingBundle extends Bundle
         } else {
             foreach ($this->container->getParameter('ting.repositories') as $bundle) {
                 $directory = $this->container->get('file_locator')->locate($bundle['directory']) . '/';
-                $metadataRepository->batchLoadMetadata($bundle['namespace'], $directory . $bundle['glob']);
+
+                if (isset($bundle['options']) === true) {
+                    $options = $bundle['options'];
+                } else {
+                    $options = [];
+                }
+
+                $metadataRepository->batchLoadMetadata($bundle['namespace'], $directory . $bundle['glob'], $options);
             }
         }
 
