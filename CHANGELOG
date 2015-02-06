@@ -1,2 +1,5 @@
+2.0.1 (2015-02-06) :
+    * add again charset option (charset option was accidently removed)
+
 2.0.0 (2015-02-05) :
     * initMetada can now receive database name and connection name into options
