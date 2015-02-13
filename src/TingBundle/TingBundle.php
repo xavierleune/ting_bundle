@@ -38,7 +38,12 @@ class TingBundle extends Bundle
 
         if (file_exists($cacheFile)) {
             $repositories = include($cacheFile);
-            $metadataRepository->batchLoadMetadataFromCache($repositories);
+            foreach ($repositories as $repositoriesConf) {
+                $metadataRepository->batchLoadMetadataFromCache(
+                    $repositoriesConf['repositories'],
+                    $repositoriesConf['options']
+                );
+            }
         } else {
             foreach ($this->container->getParameter('ting.repositories') as $bundle) {
                 $directory = $this->container->get('file_locator')->locate($bundle['directory']) . '/';

@@ -1,3 +1,6 @@
+2.0.3 (2015-02-13) :
+    * Fix problem about options not saved in cache
+
 2.0.2 (2015-02-06) :
     * Charset option misconfigured
 
