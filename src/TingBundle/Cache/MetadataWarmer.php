@@ -47,12 +47,21 @@ class MetadataWarmer implements CacheWarmerInterface
         $metadataRepository = $this->container->get('ting.metadatarepository');
 
         $repositories = [];
-        foreach ($this->container->getParameter('ting.repositories') as $bundle) {
+        foreach ($this->container->getParameter('ting.repositories') as $key => $bundle) {
             $directory = $this->container->get('file_locator')->locate($bundle['directory']) . '/';
-             $repositories = array_merge(
-                 $repositories,
-                 $metadataRepository->batchLoadMetadata($bundle['namespace'], $directory . $bundle['glob'])
-             );
+
+            if (isset($bundle['options']) === true) {
+                $options = $bundle['options'];
+            } else {
+                $options = [];
+            }
+
+            $repositories[$key] = [
+                'repositories' =>
+                    $metadataRepository
+                        ->batchLoadMetadata($bundle['namespace'], $directory . $bundle['glob'], $options),
+                'options' => $options
+            ];
         }
 
         $metadataCacheGenerator = new MetadataCacheGenerator(

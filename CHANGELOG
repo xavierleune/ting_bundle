@@ -1,2 +1,5 @@
+2.0.1 (2015-02-13) :
+    * Fix problem about options not saved in cache
+
 2.0.0 (2015-02-05) :
     * initMetada can now receive database name and connection name into options
