@@ -39,7 +39,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('cache_file')
-                    ->defaultValue('ting.' . TingBundle::CACHE_VERSION . '.php')
+                    ->defaultValue('ting.' . TingBundle::VERSION . '.php')
                 ->end()
                 ->arrayNode('repositories')
                     ->prototype('array')

@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 class TingBundle extends Bundle
 {
 
-    const CACHE_VERSION = '2.0';
+    const VERSION = '2.0.4';
 
     public function boot()
     {
