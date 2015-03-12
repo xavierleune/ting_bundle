@@ -24,6 +24,7 @@
 
 namespace CCMBenchmark\TingBundle\DependencyInjection;
 
+use CCMBenchmark\TingBundle\TingBundle;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -38,7 +39,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('cache_file')
-                    ->defaultValue('ting.php')
+                    ->defaultValue('ting.' . TingBundle::VERSION . '.php')
                 ->end()
                 ->arrayNode('repositories')
                     ->prototype('array')

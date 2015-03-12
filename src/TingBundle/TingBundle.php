@@ -29,6 +29,8 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 class TingBundle extends Bundle
 {
 
+    const VERSION = '2.0.4';
+
     public function boot()
     {
         $metadataRepository = $this->container->get('ting.metadatarepository');
