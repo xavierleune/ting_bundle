@@ -26,7 +26,7 @@
             {% if (collector.miss == 0) %}
                 (100%)
             {% else %}
-                ({{ '%0.2f'|format( (collector.miss/collector.hits)*100 ) }}%)
+                ({{ '%0.2f'|format( (collector.hits/(collector.hits + collector.miss))*100 ) }}%)
             {% endif %}
         </span>
     </div>
