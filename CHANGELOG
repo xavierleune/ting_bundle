@@ -1,3 +1,6 @@
+2.1.0 (YYYY-MM-DD):
+    * The configuration can be resolved before MetadataInitialisation
+
 2.0.5 (2015-07-03):
     * Fix fatal error in the cacheCollector view when no hits on a page
 
