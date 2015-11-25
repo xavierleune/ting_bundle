@@ -24,6 +24,7 @@
 
 namespace CCMBenchmark\TingBundle;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class TingBundle extends Bundle
@@ -38,16 +39,26 @@ class TingBundle extends Bundle
         $cacheFile = $this->container->getParameter('kernel.cache_dir') . '/' .
             $this->container->getParameter('ting.cache_file');
 
+        $configurationResolver = $this->container->get(
+            'ting.configuration_resolver',
+            ContainerInterface::NULL_ON_INVALID_REFERENCE
+        );
+
         if (file_exists($cacheFile)) {
             $repositories = include($cacheFile);
-            foreach ($repositories as $repositoriesConf) {
+            foreach ($repositories as $alias => $repositoriesConf) {
+                $options = $repositoriesConf['options'];
+                if ($configurationResolver !== null) {
+                    $options = $configurationResolver->resolveConf($alias, $options);
+                }
+
                 $metadataRepository->batchLoadMetadataFromCache(
                     $repositoriesConf['repositories'],
-                    $repositoriesConf['options']
+                    $options
                 );
             }
         } else {
-            foreach ($this->container->getParameter('ting.repositories') as $bundle) {
+            foreach ($this->container->getParameter('ting.repositories') as $alias => $bundle) {
                 $directory = $this->container->get('file_locator')->locate($bundle['directory']) . '/';
 
                 if (isset($bundle['options']) === true) {
@@ -55,7 +66,9 @@ class TingBundle extends Bundle
                 } else {
                     $options = [];
                 }
-
+                if ($configurationResolver !== null) {
+                    $options = $configurationResolver->resolveConf($alias, $options);
+                }
                 $metadataRepository->batchLoadMetadata($bundle['namespace'], $directory . $bundle['glob'], $options);
             }
         }

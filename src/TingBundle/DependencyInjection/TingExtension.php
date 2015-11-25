@@ -107,5 +107,9 @@ class TingExtension extends Extension
             $definition->addMethodCall('setCacheLogger', [$reference]);
         }
 
+        if ($config['configuration_resolver_service'] !== null) {
+            $container->setAlias('ting.configuration_resolver', $config['configuration_resolver_service']);
+        }
+
     }
 }
