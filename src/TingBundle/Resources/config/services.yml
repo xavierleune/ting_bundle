@@ -2,7 +2,7 @@ services:
     ting.metadatarepository:
         class: CCMBenchmark\Ting\MetadataRepository
         arguments:
-            - @ting.serializerfactory
+            - "@ting.serializerfactory"
 
     ting.serializerfactory:
         class: CCMBenchmark\Ting\Serializer\SerializerFactory
@@ -19,9 +19,9 @@ services:
     ting.unitofwork:
         class: CCMBenchmark\Ting\UnitOfWork
         arguments:
-            - @ting.connectionpool
-            - @ting.metadatarepository
-            - @ting.queryfactory
+            - "@ting.connectionpool"
+            - "@ting.metadatarepository"
+            - "@ting.queryfactory"
 
     ting.hydrator:
         class: CCMBenchmark\Ting\Repository\Hydrator
@@ -40,9 +40,9 @@ services:
     ting.collectionfactory:
         class: CCMBenchmark\Ting\Repository\CollectionFactory
         arguments:
-            - @ting.metadatarepository
-            - @ting.unitofwork
-            - @ting.hydrator
+            - "@ting.metadatarepository"
+            - "@ting.unitofwork"
+            - "@ting.hydrator"
 
     ting.cache:
         class: CCMBenchmark\Ting\Cache\Memcached
@@ -60,17 +60,17 @@ services:
     ting:
         class: CCMBenchmark\Ting\Repository\RepositoryFactory
         arguments:
-            - @ting.connectionpool
-            - @ting.metadatarepository
-            - @ting.queryfactory
-            - @ting.collectionfactory
-            - @ting.unitofwork
-            - @ting.cache
-            - @ting.serializerfactory
+            - "@ting.connectionpool"
+            - "@ting.metadatarepository"
+            - "@ting.queryfactory"
+            - "@ting.collectionfactory"
+            - "@ting.unitofwork"
+            - "@ting.cache"
+            - "@ting.serializerfactory"
 
     ting.metadata_warmer:
         class: CCMBenchmark\TingBundle\Cache\MetadataWarmer
         arguments:
-            - @service_container
+            - "@service_container"
         tags:
             - {name: kernel.cache_warmer, priority:0}
