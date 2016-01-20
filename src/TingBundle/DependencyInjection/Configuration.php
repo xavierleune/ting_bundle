@@ -112,7 +112,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('memcached')
+                /*->arrayNode('memcached')
                     ->canBeDisabled()
                     ->children()
                         ->scalarNode('persistent_id')
@@ -142,7 +142,8 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                         ->end()
                     ->end()
-                ->end()
+                ->end()*/
+                ->scalarNode('cache_service')->end()
             ->end();
 
         return $treeBuilder;
