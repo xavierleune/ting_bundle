@@ -111,5 +111,9 @@ class TingExtension extends Extension
             $container->setAlias('ting.configuration_resolver', $config['configuration_resolver_service']);
         }
 
+        if (isset($config['cache_service']) === true) {
+            $container->setAlias('ting.cache', $config['$cache_service']);
+        }
+
     }
 }
