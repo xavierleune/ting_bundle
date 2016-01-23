@@ -41,6 +41,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('cache_file')
                     ->defaultValue('ting.' . TingBundle::VERSION . '.php')
                 ->end()
+                ->scalarNode('cache_provider')->end()
                 ->scalarNode('configuration_resolver_service')
                     ->info('If provided, this service will receive the configuration at boot time and can alter it.')
                     ->defaultNull()
@@ -113,7 +114,6 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->scalarNode('cache_service')->end()
             ->end();
 
         return $treeBuilder;

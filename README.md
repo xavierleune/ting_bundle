@@ -3,7 +3,7 @@ Installation
 
 1. Require Ting Bundle with
     ```composer require ccmbenchmark/ting_bundle```
-2. Load Bundles in AppKernel.php  
+2. Load Bundles in AppKernel.php
 
 ```php
     new Doctrine\Bundle\DoctrineCacheBundle\DoctrineCacheBundle(),
@@ -19,7 +19,7 @@ Configuration
         repositories:
             Acme:
                 namespace: Acme\DemoBundle\Entity
-                directory: @DemoBundle\Entity
+                directory: "@DemoBundle/Entity"
 
         connections:
             main:

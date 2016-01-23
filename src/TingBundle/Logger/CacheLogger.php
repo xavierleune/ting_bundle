@@ -89,10 +89,7 @@ class CacheLogger implements CacheLoggerInterface
     public function stopOperation($miss = false)
     {
         if ($this->stopwatch !== null) {
-            if (in_array($this->operations[$this->operationIndex]['type'], [
-                CacheLoggerInterface::OPERATION_GET,
-                CacheLoggerInterface::OPERATION_GET_MULTI
-            ])) {
+            if ($this->operations[$this->operationIndex]['type'] === CacheLoggerInterface::OPERATION_GET) {
                 if ($miss === true) {
                     $this->miss++;
                     $this->operations[$this->operationIndex]['miss'] = true;
