@@ -1,3 +1,6 @@
+X.X.X (XXXX-XX-XX):
+    * You can now add extra options in configuration ting.repositories.App.options.default.extra
+
 2.1.0 (2015-11-25):
     * The configuration can be resolved before MetadataInitialisation
 
