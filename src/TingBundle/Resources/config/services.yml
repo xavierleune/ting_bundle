@@ -45,7 +45,7 @@ services:
             - "@ting.hydrator"
 
     ting.cache:
-        class: CCMBenchmark\Ting\Cache\Memcached
+        class: CCMBenchmark\Ting\Cache\Cache
 
     ting.driver_data_collector:
         class: CCMBenchmark\TingBundle\DataCollector\TingDriverDataCollector

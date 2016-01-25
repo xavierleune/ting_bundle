@@ -27,13 +27,22 @@ namespace CCMBenchmark\TingBundle\DependencyInjection;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
 
-class TingExtension extends Extension
+class TingExtension extends Extension implements PrependExtensionInterface
 {
+
+    public function prepend(ContainerBuilder $container)
+    {
+        $container->prependExtensionConfig(
+            'doctrine_cache',
+            ['providers'=> ['ting_cache_void' => ['type' => 'void']]]
+        );
+    }
 
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -41,11 +50,23 @@ class TingExtension extends Extension
         $loader->load('services.yml');
 
         $configuration = new Configuration();
+
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('ting.cache_file', $config['cache_file']);
         $container->setParameter('ting.repositories', $config['repositories']);
         $container->setParameter('ting.connections', $config['connections']);
+
+        $definition = $container->getDefinition('ting.cache');
+        if (isset($config['cache_provider']) === true) {
+            $definition->addMethodCall('setCache', [new Reference($config['cache_provider'])]);
+        } else {
+            $definition->addMethodCall('setCache', [new Reference('doctrine_cache.providers.ting_cache_void')]);
+        }
+
+        if ($config['configuration_resolver_service'] !== null) {
+            $container->setAlias('ting.configuration_resolver', $config['configuration_resolver_service']);
+        }
 
         // Adding optional service ting.driverlogger
         if ($container->getParameter('kernel.debug') === true) {
@@ -63,34 +84,7 @@ class TingExtension extends Extension
             // Add logger to DataCollector
             $definition = $container->getDefinition('ting.driver_data_collector');
             $definition->addMethodCall('setDriverLogger', [$reference]);
-        }
 
-        $servers = $config['memcached']['servers'];
-        $config['memcached']['servers'] = array_values($servers);
-
-        $options = $config['memcached']['options'];
-        $config['memcached']['options'] = [];
-
-        foreach ($options as $data) {
-            if (defined($data['key']) === true) {
-                $data['key'] = constant($data['key']);
-            }
-
-            if (defined($data['value']) === true) {
-                $data['value'] = constant($data['value']);
-            }
-
-            $config['memcached']['options'][$data['key']] = $data['value'];
-        }
-
-        $container->setParameter('ting.memcached', $config['memcached']);
-
-
-        // Definition of ting.cache_memcached service
-        $definition = $container->getDefinition('ting.cache');
-        $definition->addMethodCall('setConfig', [$config['memcached']]);
-
-        if ($container->getParameter('kernel.debug') === true) {
             $definition = new Definition('CCMBenchmark\TingBundle\Logger\CacheLogger');
             $definition->addArgument(new Reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE));
             $definition->addArgument(new Reference('debug.stopwatch', ContainerInterface::NULL_ON_INVALID_REFERENCE));
@@ -98,7 +92,7 @@ class TingExtension extends Extension
 
             $reference = new Reference('ting.cachelogger');
 
-            // Add logger to connection Pool
+            // Add logger to Cache
             $definition = $container->getDefinition('ting.cache');
             $definition->addMethodCall('setLogger', [$reference]);
 
@@ -106,10 +100,5 @@ class TingExtension extends Extension
             $definition = $container->getDefinition('ting.cache_data_collector');
             $definition->addMethodCall('setCacheLogger', [$reference]);
         }
-
-        if ($config['configuration_resolver_service'] !== null) {
-            $container->setAlias('ting.configuration_resolver', $config['configuration_resolver_service']);
-        }
-
     }
 }
