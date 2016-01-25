@@ -47,9 +47,6 @@ services:
     ting.cache:
         class: CCMBenchmark\Ting\Cache\Cache
 
-    ting.cache.void:
-        class: Doctrine\Common\Cache\VoidCache
-
     ting.driver_data_collector:
         class: CCMBenchmark\TingBundle\DataCollector\TingDriverDataCollector
         tags:
