@@ -63,6 +63,7 @@ class Configuration implements ConfigurationInterface
                                     ->children()
                                         ->scalarNode('connection')->end()
                                         ->scalarNode('database')->end()
+                                        ->variableNode('extra')->end()
                                     ->end()
                                 ->end()
                             ->end()
