@@ -13,11 +13,5 @@
             "CCMBenchmark\\TingBundle\\": "src/TingBundle/"
         }
     },
-    "repositories": {
-        "ting": {
-            "type": "git",
-            "url": "git@bitbucket.org:ccmbenchmark/ting.git"
-        }
-    },
     "minimum-stability" : "stable"
 }

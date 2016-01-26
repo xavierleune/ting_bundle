@@ -1,4 +1,9 @@
-X.X.X (XXXX-XX-XX):
+3.0.0 (2016-01-26):
+    * Compatibility with ting 3.0
+    * Added requirement to doctrine/doctrine-cache-bundle to provide a configuration layer for doctrine/cache (provided by Ting)
+    * Removed configuration for memcached (Memcached support was provided by Ting but has been replaced with doctrine/cache)
+
+2.2.0 (2016-01-19):
     * You can now add extra options in configuration ting.repositories.App.options.default.extra
 
 2.1.0 (2015-11-25):
