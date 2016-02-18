@@ -20,6 +20,19 @@ Configuration
             Acme:
                 namespace: Acme\DemoBundle\Entity
                 directory: "@DemoBundle/Entity"
+                options:
+                    #pass options to your repository
+                    Acme\DemoBundle\BazRepository:
+                        extra:
+                            bar: hello
+                            foo: world
+                    Acme\DemoBundle\FooRepository:
+                        extra:
+                            bar: hello
+                            foo: world
+                    default:
+                        connection: main
+                        database: baz
 
         connections:
             main:
