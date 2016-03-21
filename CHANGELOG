@@ -1,4 +1,4 @@
-3.0.1 (2017-03-xx):
+3.0.1 (2016-03-21):
     * Initialization of Metadata is done in a new "RepositoryFactory", at instanciation time
 
 3.0.0 (2016-01-26):
