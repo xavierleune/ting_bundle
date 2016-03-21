@@ -30,6 +30,9 @@ use Symfony\Component\HttpKernel\Config\FileLocator;
 
 class RepositoryFactory extends \CCMBenchmark\Ting\Repository\RepositoryFactory
 {
+    /**
+     * @var bool Has been the loadMetadata job already done ?
+     */
     private $metadataLoaded = false;
 
     /**
