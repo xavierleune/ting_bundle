@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="ting" class="CCMBenchmark\TingBundle\Repository\RepositoryFactory">
+            <argument type="service" id="ting.connectionpool" />
+            <argument type="service" id="ting.metadatarepository" />
+            <argument type="service" id="ting.queryfactory" />
+            <argument type="service" id="ting.collectionfactory" />
+            <argument type="service" id="ting.unitofwork" />
+            <argument type="service" id="ting.cache" />
+            <argument type="service" id="ting.serializerfactory" />
+            <call method="loadMetadata">
+                <argument>%kernel.cache_dir%</argument>
+                <argument>%ting.cache_file%</argument>
+                <argument>%ting.repositories%</argument>
+                <argument type="service" id="file_locator" />
+                <argument type="service" id="ting.configuration_resolver" on-invalid="null" />
+            </call>
+        </service>
+    </services>
+</container>

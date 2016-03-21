@@ -28,10 +28,12 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Validator\Constraints\File;
 
 class TingExtension extends Extension implements PrependExtensionInterface
 {
@@ -49,6 +51,9 @@ class TingExtension extends Extension implements PrependExtensionInterface
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
+        $xmlLoader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $xmlLoader->load('services.xml');
+
         $configuration = new Configuration();
 
         $config = $this->processConfiguration($configuration, $configs);
@@ -56,6 +61,7 @@ class TingExtension extends Extension implements PrependExtensionInterface
         $container->setParameter('ting.cache_file', $config['cache_file']);
         $container->setParameter('ting.repositories', $config['repositories']);
         $container->setParameter('ting.connections', $config['connections']);
+
 
         $definition = $container->getDefinition('ting.cache');
         if (isset($config['cache_provider']) === true) {
