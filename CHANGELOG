@@ -1,3 +1,6 @@
+3.0.1 (2017-03-xx):
+    * Initialization of Metadata is done in a new "RepositoryFactory", at instanciation time
+
 3.0.0 (2016-01-26):
     * Compatibility with ting 3.0
     * Added requirement to doctrine/doctrine-cache-bundle to provide a configuration layer for doctrine/cache (provided by Ting)

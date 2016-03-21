@@ -29,50 +29,5 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class TingBundle extends Bundle
 {
-
     const VERSION = '3.0';
-
-    public function boot()
-    {
-        $metadataRepository = $this->container->get('ting.metadatarepository');
-
-        $cacheFile = $this->container->getParameter('kernel.cache_dir') . '/' .
-            $this->container->getParameter('ting.cache_file');
-
-        $configurationResolver = $this->container->get(
-            'ting.configuration_resolver',
-            ContainerInterface::NULL_ON_INVALID_REFERENCE
-        );
-
-        if (file_exists($cacheFile)) {
-            $repositories = include($cacheFile);
-            foreach ($repositories as $alias => $repositoriesConf) {
-                $options = $repositoriesConf['options'];
-                if ($configurationResolver !== null) {
-                    $options = $configurationResolver->resolveConf($alias, $options);
-                }
-
-                $metadataRepository->batchLoadMetadataFromCache(
-                    $repositoriesConf['repositories'],
-                    $options
-                );
-            }
-        } else {
-            foreach ($this->container->getParameter('ting.repositories') as $alias => $bundle) {
-                $directory = $this->container->get('file_locator')->locate($bundle['directory']) . '/';
-
-                if (isset($bundle['options']) === true) {
-                    $options = $bundle['options'];
-                } else {
-                    $options = [];
-                }
-                if ($configurationResolver !== null) {
-                    $options = $configurationResolver->resolveConf($alias, $options);
-                }
-                $metadataRepository->batchLoadMetadata($bundle['namespace'], $directory . $bundle['glob'], $options);
-            }
-        }
-
-        $this->container->get('ting.connectionpool')->setConfig($this->container->getParameter('ting.connections'));
-    }
 }
