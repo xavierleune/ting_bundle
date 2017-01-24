@@ -73,9 +73,22 @@ class UniqueEntityValidator extends ConstraintValidator
         $myEntity = $repository->getOneBy($criteria);
 
         if ($myEntity !== null) {
-            $this->context->buildViolation($constraint->message)
-                ->setParameter('{{ data }}', implode(', ', $criteria))
-                ->addViolation();
+            $validationFailed = true;
+            $identityFields = (array) $constraint->identityFields;
+            if ($identityFields !== []) {
+                $validationFailed = false;
+                foreach ($identityFields as $identityField) {
+                    if ($entity->{'get' . $identityField}() !== $myEntity->{'get' . $identityField}()) {
+                        $validationFailed = true;
+                        break;
+                    }
+                }
+            }
+            if ($validationFailed === true) {
+                $this->context->buildViolation($constraint->message)
+                    ->setParameter('{{ data }}', implode(', ', $criteria))
+                    ->addViolation();
+            }
         }
     }
 }
