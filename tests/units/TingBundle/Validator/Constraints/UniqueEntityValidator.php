@@ -157,6 +157,126 @@ class UniqueEntityValidator extends atoum
         ;
     }
 
+    public function testValidateShouldNotBuildANewViolationWithSameEntity()
+    {
+        $mockValidator = new \mock\Symfony\Component\Validator\Validator\ValidatorInterface();
+        $mockTranslator = new \mock\Symfony\Component\Translation\TranslatorInterface();
+
+        $mockConstraintViolationBuilder =
+            new \mock\Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface();
+        $this->calling($mockConstraintViolationBuilder)->setParameter =
+            function ($key, $value) use ($mockConstraintViolationBuilder) {
+                return $mockConstraintViolationBuilder;
+            };
+        $this->calling($mockConstraintViolationBuilder)->addViolation = null;
+
+        $mockExecutionContext =
+            new \mock\Symfony\Component\Validator\Context\ExecutionContext(
+                $mockValidator,
+                '',
+                $mockTranslator
+            );
+        $this->calling($mockExecutionContext)->buildViolation = function () use ($mockConstraintViolationBuilder) {
+            return $mockConstraintViolationBuilder;
+        };
+        $mockExecutionContext->setConstraint(new \mock\Symfony\Component\Validator\Constraint());
+
+        $this->mockGenerator->orphanize('__construct');
+        $mockUniqueEntity = new \mock\CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity();
+        $mockUniqueEntity->identityFields = ['id'];
+
+        $mockFakeRepository = new \mock\FakeRepository;
+        $cityId = hexdec(uniqid());
+        $this->calling($mockFakeRepository)->getOneBy = function ($params) use ($cityId) {
+            $city = new City();
+            $city->setId($cityId);
+            return $city;
+        };
+
+        $this->mockGenerator->orphanize('__construct');
+        $mockRepositoryFactory = new \mock\CCMBenchmark\TingBundle\Repository\RepositoryFactory();
+        $this->calling($mockRepositoryFactory)->get = $mockFakeRepository;
+
+        $mockUniqueEntityValidator =
+            new \mock\CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntityValidator($mockRepositoryFactory);
+        $mockUniqueEntityValidator->initialize($mockExecutionContext);
+
+        $this
+            ->if($city = new City())
+            ->and($city->setId($cityId))
+            ->and($city->setName('Luxiol'))
+            ->and($mockUniqueEntityValidator->validate($city, $mockUniqueEntity))
+            ->then
+                ->mock($mockExecutionContext)
+                    ->call('buildViolation')
+                        ->never()
+                ->mock($mockConstraintViolationBuilder)
+                    ->call('setParameter')
+                        ->never()
+        ;
+    }
+
+    public function testValidateShouldBuildANewViolationWithIdentityField()
+    {
+        $mockValidator = new \mock\Symfony\Component\Validator\Validator\ValidatorInterface();
+        $mockTranslator = new \mock\Symfony\Component\Translation\TranslatorInterface();
+
+        $mockConstraintViolationBuilder =
+            new \mock\Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface();
+        $this->calling($mockConstraintViolationBuilder)->setParameter =
+            function ($key, $value) use ($mockConstraintViolationBuilder) {
+                return $mockConstraintViolationBuilder;
+            };
+        $this->calling($mockConstraintViolationBuilder)->addViolation = null;
+
+        $mockExecutionContext =
+            new \mock\Symfony\Component\Validator\Context\ExecutionContext(
+                $mockValidator,
+                '',
+                $mockTranslator
+            );
+        $this->calling($mockExecutionContext)->buildViolation = function () use ($mockConstraintViolationBuilder) {
+            return $mockConstraintViolationBuilder;
+        };
+        $mockExecutionContext->setConstraint(new \mock\Symfony\Component\Validator\Constraint());
+
+        $this->mockGenerator->orphanize('__construct');
+        $mockUniqueEntity = new \mock\CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity();
+        $mockUniqueEntity->identityFields = ['id'];
+
+        $mockFakeRepository = new \mock\FakeRepository;
+        $cityId    = hexdec(uniqid());
+        $this->calling($mockFakeRepository)->getOneBy = function ($params) use ($cityId) {
+            $city = new City();
+            $city->setId($cityId);
+            return $city;
+        };
+
+        $this->mockGenerator->orphanize('__construct');
+        $mockRepositoryFactory = new \mock\CCMBenchmark\TingBundle\Repository\RepositoryFactory();
+        $this->calling($mockRepositoryFactory)->get = $mockFakeRepository;
+
+        $mockUniqueEntityValidator =
+            new \mock\CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntityValidator($mockRepositoryFactory);
+        $mockUniqueEntityValidator->initialize($mockExecutionContext);
+
+        $this
+            ->if($city = new City())
+            ->and($city->setId(hexdec(uniqid())))
+            ->and($city->setName('Luxiol'))
+            ->and($mockUniqueEntityValidator->validate($city, $mockUniqueEntity))
+            ->then
+                ->mock($mockExecutionContext)
+                    ->call('buildViolation')
+                        ->withArguments($mockUniqueEntity->message)
+                            ->once()
+                ->mock($mockConstraintViolationBuilder)
+                    ->call('setParameter')
+                        ->withArguments('{{ data }}', '')
+                            ->once();
+        ;
+    }
+
     public function testGetDefaultOption()
     {
         $this->mockGenerator->orphanize('__construct');

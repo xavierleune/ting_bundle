@@ -26,13 +26,27 @@ namespace tests\fixtures;
 
 use CCMBenchmark\Ting\Entity\NotifyProperty;
 use CCMBenchmark\Ting\Entity\NotifyPropertyInterface;
+use mageekguy\atoum\asserters\integer;
 
 class City
 {
     /**
+     * @var int
+     */
+    private $id = null;
+
+    /**
      * @var string
      */
     private $name = '';
+
+    /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = (int) $id;
+    }
 
     /**
      * @param string $name
@@ -40,6 +54,14 @@ class City
     public function setName($name)
     {
         $this->name = (string) $name;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
