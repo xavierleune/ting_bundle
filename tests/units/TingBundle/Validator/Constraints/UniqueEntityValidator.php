@@ -78,6 +78,7 @@ class UniqueEntityValidator extends atoum
         $this->calling($mockFakeRepository)->getOneBy = function ($params) {
             return new \stdClass();
         };
+        $this->calling($mockFakeRepository)->getMetadata = $this->getMockMetadata();
 
         $this->mockGenerator->orphanize('__construct');
         $mockRepositoryFactory = new \mock\CCMBenchmark\TingBundle\Repository\RepositoryFactory();
@@ -134,6 +135,7 @@ class UniqueEntityValidator extends atoum
         $this->calling($mockFakeRepository)->getOneBy = function ($params) {
             return null;
         };
+        $this->calling($mockFakeRepository)->getMetadata = $this->getMockMetadata();
 
         $this->mockGenerator->orphanize('__construct');
         $mockRepositoryFactory = new \mock\CCMBenchmark\TingBundle\Repository\RepositoryFactory();
@@ -192,6 +194,7 @@ class UniqueEntityValidator extends atoum
             $city->setId($cityId);
             return $city;
         };
+        $this->calling($mockFakeRepository)->getMetadata = $this->getMockMetadata();
 
         $this->mockGenerator->orphanize('__construct');
         $mockRepositoryFactory = new \mock\CCMBenchmark\TingBundle\Repository\RepositoryFactory();
@@ -251,6 +254,7 @@ class UniqueEntityValidator extends atoum
             $city->setId($cityId);
             return $city;
         };
+        $this->calling($mockFakeRepository)->getMetadata = $this->getMockMetadata();
 
         $this->mockGenerator->orphanize('__construct');
         $mockRepositoryFactory = new \mock\CCMBenchmark\TingBundle\Repository\RepositoryFactory();
@@ -287,5 +291,17 @@ class UniqueEntityValidator extends atoum
                 ->array($mockUniqueEntity->getDefaultOption())
                     ->isIdenticalTo(['fields', 'repository'])
         ;
+    }
+
+    private function getMockMetadata()
+    {
+        $this->mockGenerator()->orphanize('__construct');
+        $this->mockGenerator()->shuntParentClassCalls();
+        $metadata = new \mock\CCMBenchmark\Ting\Repository\Metadata();
+        $this->calling($metadata)->getGetter = function ($fieldName) {
+            return 'get' . $fieldName;
+        };
+
+        return $metadata;
     }
 }
