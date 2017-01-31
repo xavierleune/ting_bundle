@@ -50,6 +50,11 @@ class UniqueEntity extends Constraint
     public $fields = array();
 
     /**
+     * @var array
+     */
+    public $identityFields = array();
+
+    /**
      * @return string
      */
     public function getTargets()
