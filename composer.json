@@ -1,7 +1,7 @@
 {
     "name": "ccmbenchmark/ting_bundle",
     "description" : "Symfony 2 bundle for ccmbenchmark/ting",
-    "type": "library",
+    "type": "symfony-bundle",
     "license": "Apache-2.0",
     "require": {
         "php": ">=5.5",
