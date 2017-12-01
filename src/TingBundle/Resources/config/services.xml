@@ -5,7 +5,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="ting" class="CCMBenchmark\TingBundle\Repository\RepositoryFactory">
+        <service id="ting" class="CCMBenchmark\TingBundle\Repository\RepositoryFactory" public="true">
             <argument type="service" id="ting.connectionpool" />
             <argument type="service" id="ting.metadatarepository" />
             <argument type="service" id="ting.queryfactory" />
@@ -22,32 +22,32 @@
             </call>
         </service>
 
-        <service id="ting.metadatarepository" class="CCMBenchmark\Ting\MetadataRepository">
+        <service id="ting.metadatarepository" class="CCMBenchmark\Ting\MetadataRepository" public="true">
             <argument type="service" id="ting.serializerfactory" />
         </service>
 
-        <service id="ting.serializerfactory" class="CCMBenchmark\Ting\Serializer\SerializerFactory">
+        <service id="ting.serializerfactory" class="CCMBenchmark\Ting\Serializer\SerializerFactory" public="true">
         </service>
 
-        <service id="ting.queryfactory" class="CCMBenchmark\Ting\Query\QueryFactory">
+        <service id="ting.queryfactory" class="CCMBenchmark\Ting\Query\QueryFactory" public="true">
         </service>
 
-        <service id="ting.driverlogger" synthetic="true">
+        <service id="ting.driverlogger" synthetic="true" public="true">
         </service>
 
-        <service id="ting.connectionpool" class="CCMBenchmark\Ting\ConnectionPool">
+        <service id="ting.connectionpool" class="CCMBenchmark\Ting\ConnectionPool" public="true">
             <call method="setConfig">
                 <argument>%ting.connections%</argument>
             </call>
         </service>
 
-        <service id="ting.unitofwork" class="CCMBenchmark\Ting\UnitOfWork">
+        <service id="ting.unitofwork" class="CCMBenchmark\Ting\UnitOfWork" public="true">
             <argument type="service" id="ting.connectionpool" />
             <argument type="service" id="ting.metadatarepository" />
             <argument type="service" id="ting.queryfactory" />
         </service>
 
-        <service id="ting.hydrator" class="CCMBenchmark\Ting\Repository\Hydrator" shared="false">
+        <service id="ting.hydrator" class="CCMBenchmark\Ting\Repository\Hydrator" shared="false" public="true">
             <call method="setMetadataRepository">
                 <argument type="service" id="ting.metadatarepository" />
             </call>
@@ -56,7 +56,7 @@
             </call>
         </service>
 
-        <service id="ting.hydrator_single_object" class="CCMBenchmark\Ting\Repository\HydratorSingleObject" shared="false">
+        <service id="ting.hydrator_single_object" class="CCMBenchmark\Ting\Repository\HydratorSingleObject" shared="false" public="true">
             <call method="setMetadataRepository">
                 <argument type="service" id="ting.metadatarepository" />
             </call>
@@ -65,29 +65,29 @@
             </call>
         </service>
 
-        <service id="ting.collectionfactory" class="CCMBenchmark\Ting\Repository\CollectionFactory">
+        <service id="ting.collectionfactory" class="CCMBenchmark\Ting\Repository\CollectionFactory" public="true">
             <argument type="service" id="ting.metadatarepository" />
             <argument type="service" id="ting.unitofwork" />
             <argument type="service" id="ting.hydrator" />
         </service>
 
-        <service id="ting.cache" class="CCMBenchmark\Ting\Cache\Cache">
+        <service id="ting.cache" class="CCMBenchmark\Ting\Cache\Cache" public="true">
         </service>
 
-        <service id="ting.driver_data_collector" class="CCMBenchmark\TingBundle\DataCollector\TingDriverDataCollector">
+        <service id="ting.driver_data_collector" class="CCMBenchmark\TingBundle\DataCollector\TingDriverDataCollector" public="true">
             <tag name="data_collector" template="TingBundle:Collector:driverCollector" id="ting.driver" />
         </service>
 
-        <service id="ting.cache_data_collector" class="CCMBenchmark\TingBundle\DataCollector\TingCacheDataCollector">
+        <service id="ting.cache_data_collector" class="CCMBenchmark\TingBundle\DataCollector\TingCacheDataCollector" public="true">
             <tag name="data_collector" template="TingBundle:Collector:cacheCollector" id="ting.cache" />
         </service>
 
-        <service id="ting.metadata_warmer" class="CCMBenchmark\TingBundle\Cache\MetadataWarmer">
+        <service id="ting.metadata_warmer" class="CCMBenchmark\TingBundle\Cache\MetadataWarmer" public="true">
             <argument type="service" id="service_container" />
             <tag name="kernel.cache_warmer" priority="0" />
         </service>
 
-        <service id="ting.validator.unique.entity" class="CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntityValidator">
+        <service id="ting.validator.unique.entity" class="CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntityValidator" public="true">
             <argument type="service" id="ting" />
             <tag name="validator.constraint_validator" />
         </service>
