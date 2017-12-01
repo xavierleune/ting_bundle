@@ -25,7 +25,6 @@
 namespace CCMBenchmark\TingBundle\DataCollector;
 
 use CCMBenchmark\Ting\Logger\CacheLoggerInterface;
-use CCMBenchmark\Ting\Logger\DriverLoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
@@ -37,15 +36,12 @@ class TingCacheDataCollector extends DataCollector
      */
     protected $cacheLogger  = null;
 
-    protected $data = [
-        'cache' => [
-            'operations'      => [],
-            'operationsCount' => 0,
-            'time'            => 0,
-            'hits'            => 0,
-            'miss'            => 0
-        ]
-    ];
+    protected $data = [];
+
+    public function __construct()
+    {
+        $this->init();
+    }
 
     /**
      * Collects data for the given Request and Response.
@@ -107,5 +103,24 @@ class TingCacheDataCollector extends DataCollector
     public function getMiss()
     {
         return $this->data['cache']['miss'];
+    }
+
+    public function reset()
+    {
+        $this->init();
+    }
+
+    private function init()
+    {
+        $this->data = [
+            'driver' => [
+                'queries'               => [],
+                'execs'                 => [],
+                'queryCount'            => 0,
+                'time'                  => 0,
+                'connections'           => [],
+                'connectionsHashToName' => []
+            ]
+        ];
     }
 }
