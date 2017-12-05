@@ -1,5 +1,5 @@
 {#{% extends app.request.isXmlHttpRequest ? 'WebProfilerBundle:Profiler:ajax_layout.html.twig' : 'WebProfilerBundle:Profiler:layout.html.twig' %}#}
-{% extends 'WebProfilerBundle:Profiler:layout.html.twig' %}
+{% extends '@WebProfiler/Profiler/layout.html.twig' %}
 
 {% block toolbar %}
     {% set icon %}
@@ -126,9 +126,9 @@
             font-size: 11px;
         }
 
-        {% include('TingBundle:Collector:prism.css.twig') %}
+        {% include('@Ting/Collector/prism.css.twig') %}
     </style>
     <script>
-        {% include('TingBundle:Collector:prism.js.twig') %}
+        {% include('@Ting/Collector/prism.js.twig') %}
     </script>
 {% endblock %}
