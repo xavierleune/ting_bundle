@@ -1,4 +1,3 @@
-{#{% extends app.request.isXmlHttpRequest ? 'WebProfilerBundle:Profiler:ajax_layout.html.twig' : 'WebProfilerBundle:Profiler:layout.html.twig' %}#}
 {% extends '@WebProfiler/Profiler/layout.html.twig' %}
 
 {% block toolbar %}
@@ -19,7 +18,7 @@
         <span>{{ '%0.2f'|format(collector.time) }} ms</span>
     </div>
     {% endset %}
-    {% include 'WebProfilerBundle:Profiler:toolbar_item.html.twig' with { 'link': profiler_url } %}
+    {% include '@WebProfiler/Profiler/toolbar_item.html.twig' with { 'link': profiler_url } %}
 {% endblock %}
 
 {% block menu %}
