@@ -75,11 +75,11 @@
         </service>
 
         <service id="ting.driver_data_collector" class="CCMBenchmark\TingBundle\DataCollector\TingDriverDataCollector" public="true">
-            <tag name="data_collector" template="TingBundle:Collector:driverCollector" id="ting.driver" />
+            <tag name="data_collector" template="@Ting/Collector/driverCollector.html.twig" id="ting.driver" />
         </service>
 
         <service id="ting.cache_data_collector" class="CCMBenchmark\TingBundle\DataCollector\TingCacheDataCollector" public="true">
-            <tag name="data_collector" template="TingBundle:Collector:cacheCollector" id="ting.cache" />
+            <tag name="data_collector" template="@Ting/Collector/cacheCollector.html.twig" id="ting.cache" />
         </service>
 
         <service id="ting.metadata_warmer" class="CCMBenchmark\TingBundle\Cache\MetadataWarmer" public="true">

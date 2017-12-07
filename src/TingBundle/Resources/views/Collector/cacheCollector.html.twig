@@ -1,4 +1,4 @@
-{% extends 'WebProfilerBundle:Profiler:layout.html.twig' %}
+{% extends '@WebProfiler/Profiler/layout.html.twig' %}
 {% block toolbar %}
     {% set icon %}
     <img width="20" height="28" alt="Cache" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAACTpAAAk6QFQJOf4AAAAB3RJTUUH3gsVCTErkceEPgAAAqJJREFUSMftlT1oFEEUx9983N5m5u425BISiXBICJpGyBmRNGKhlbFTRIMgSEiljYX2KqawEC2DoIWkEgXt7ARRiKSxOEJSGM/EQHJsdmfnbm93dp+NF4IfyQVtIv6rB/Pmx5s3j/8D+K9/X2S7s1KpVCwUCocopQ+TJJkjhNyr1WpfVlZW1G6AtFQqnXQc56wQ4jjn/CDnHAAAoigCRJz1ff+N7/vPq9Xq222Bg4ODN2zbnnAcZ4Axtu3T4jhG3/crYRjeX1xcnN4EDg0NHRNCTFBKL2WzWYtzDojYXr8IAWMMhGFYB4AnQRA8psaYZWNMWUq5KxgAACIC5xyklCKKoiNJknymjLFbhJCL8/PzJ3zfnzPG6HagiAjGGOV53vtKpTJCKb3MGLtLyuVyUwhhJUnyznXdZ2EYLnV3d+8HgDsdHR2CMbZZNSEE4jiGMAzXGWPXV1dXfSHEga6urnOU0tF6vR5xRGxyzi3G2GhfX9+o1rqplHrVaDQGMpnMZKFQuJrL5YoAgK7rftJa347j+IWUcrq3t/e0lDKLiEAIAURskuHhYd9xnPzWKhARwjCEKIqeNhqNGWPMQWNMVUq5blnWpGVZ523b3sxt3fM8T/Ff9QYAwLZtsG173Lbtca31YUIICiE+Wpb1U+5W8Z2azxgDSqnVincSb3c82hX92+awB4CI6KZp+segNE0BEV2qlBrzPG9Ka63TNAVCSPtmSgikaQpa67rneVNKqbEf7eumlPJaZ2fnvtbPJkkCSqkRAIB8Pv+hNTqEENjY2PiqtX6wsLAw9VuDzeVy+Z6enjPFYvEC5/xUJpPJBkFw9PvZbBzHTWPM61qtNrO2tvYyCALV1grI5/NWf39/iXN+xRjzCACgFS8vLy8ppaK9ufW+AQhETOxlVFxvAAAAAElFTkSuQmCC" />
@@ -31,7 +31,7 @@
         </span>
     </div>
     {% endset %}
-    {% include 'WebProfilerBundle:Profiler:toolbar_item.html.twig' with { 'link': profiler_url } %}
+    {% include '@WebProfiler/Profiler/toolbar_item.html.twig' with { 'link': profiler_url } %}
 {% endblock %}
 
 {% block menu %}
