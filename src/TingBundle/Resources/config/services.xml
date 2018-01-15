@@ -83,7 +83,11 @@
         </service>
 
         <service id="ting.metadata_warmer" class="CCMBenchmark\TingBundle\Cache\MetadataWarmer" public="true">
-            <argument type="service" id="service_container" />
+            <argument type="service" id="ting.metadatarepository" />
+            <argument type="service" id="file_locator" />
+            <argument>%ting.repositories%</argument>
+            <argument>%ting.cache_file%</argument>
+
             <tag name="kernel.cache_warmer" priority="0" />
         </service>
 

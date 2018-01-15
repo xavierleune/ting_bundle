@@ -24,17 +24,46 @@
 
 namespace CCMBenchmark\TingBundle\Cache;
 
+use CCMBenchmark\Ting\MetadataRepository;
 use CCMBenchmark\Ting\Repository\MetadataCacheGenerator;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
 class MetadataWarmer implements CacheWarmerInterface
 {
-    protected $container;
+    /**
+     * @var MetadataRepository
+     */
+    protected $metadataRepository;
 
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    /**
+     * @var FileLocator
+     */
+    protected $fileLocator;
+
+    /**
+     * @var array
+     */
+    protected $repositories;
+
+    /**
+     * MetadataWarmer constructor.
+     *
+     * @param MetadataRepository $metadataRepository
+     * @param FileLocator        $fileLocator
+     * @param array              $repositories
+     * @param string             $cacheFile
+     */
+    public function __construct(
+        MetadataRepository $metadataRepository,
+        FileLocator $fileLocator,
+        array $repositories,
+        $cacheFile
+    ) {
+        $this->metadataRepository = $metadataRepository;
+        $this->fileLocator        = $fileLocator;
+        $this->repositories       = $repositories;
+        $this->cacheFile          = (string) $cacheFile;
     }
 
     /**
@@ -44,11 +73,9 @@ class MetadataWarmer implements CacheWarmerInterface
      */
     public function warmUp($cacheDir)
     {
-        $metadataRepository = $this->container->get('ting.metadatarepository');
-
         $repositories = [];
-        foreach ($this->container->getParameter('ting.repositories') as $key => $bundle) {
-            $directory = $this->container->get('file_locator')->locate($bundle['directory']) . '/';
+        foreach ($this->repositories as $key => $bundle) {
+            $directory = $this->fileLocator->locate($bundle['directory']) . '/';
 
             if (isset($bundle['options']) === true) {
                 $options = $bundle['options'];
@@ -58,7 +85,7 @@ class MetadataWarmer implements CacheWarmerInterface
 
             $repositories[$key] = [
                 'repositories' =>
-                    $metadataRepository
+                    $this->metadataRepository
                         ->batchLoadMetadata($bundle['namespace'], $directory . $bundle['glob'], $options),
                 'options' => $options
             ];
@@ -66,7 +93,7 @@ class MetadataWarmer implements CacheWarmerInterface
 
         $metadataCacheGenerator = new MetadataCacheGenerator(
             $cacheDir,
-            $this->container->getParameter('ting.cache_file')
+            $this->cacheFile
         );
         $metadataCacheGenerator->createCache($repositories);
     }
