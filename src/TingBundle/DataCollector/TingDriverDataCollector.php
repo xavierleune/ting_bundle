@@ -61,6 +61,16 @@ class TingDriverDataCollector extends DataCollector
             $this->data['driver']['time'] = $this->driverLogger->getTotalTime();
             $this->data['driver']['connections'] = $this->driverLogger->getConnections();
             $this->data['driver']['connectionsHashToName'] = $this->driverLogger->getConnectionsHashToName();
+
+            // HttpKernel < 3.2 compatibility layer
+            // For >= 3.2 cloneVar is always present and MUST be used.
+            if (method_exists($this, 'cloneVar')) {
+                foreach ($this->data['driver']['queries'] as &$query) {
+                    if (isset($query['params']) === true) {
+                        $query['params'] = $this->cloneVar($query['params']);
+                    }
+                }
+            }
         }
     }
 
