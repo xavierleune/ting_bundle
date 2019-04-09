@@ -58,6 +58,7 @@ class TingExtension extends Extension implements PrependExtensionInterface
         $container->setParameter('ting.cache_file', $config['cache_file']);
         $container->setParameter('ting.repositories', $config['repositories']);
         $container->setParameter('ting.connections', $config['connections']);
+        $container->setParameter('ting.database_options', $config['databases_options']);
 
 
         $definition = $container->getDefinition('ting.cache');

@@ -53,6 +53,10 @@ Configuration
                         user:     world_sample_ro
                         password: world_sample_ro
                         port:     3306
+
+        databases_options:
+            baz:
+                timezone: 'Europe/Paris'
 ```
 
 Usage
