@@ -114,6 +114,13 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('databases_options')
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('timezone')->end()
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

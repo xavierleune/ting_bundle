@@ -50,7 +50,7 @@ class UniqueEntityValidator extends atoum
     public function testValidateShouldBuildANewViolation()
     {
         $mockValidator = new \mock\Symfony\Component\Validator\Validator\ValidatorInterface();
-        $mockTranslator = new \mock\Symfony\Component\Translation\TranslatorInterface();
+        $mockTranslator = new \mock\Symfony\Contracts\Translation\TranslatorInterface();
 
         $mockConstraintViolationBuilder =
             new \mock\Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface();
@@ -107,7 +107,7 @@ class UniqueEntityValidator extends atoum
     public function testValidateShouldNotBuildANewViolation()
     {
         $mockValidator = new \mock\Symfony\Component\Validator\Validator\ValidatorInterface();
-        $mockTranslator = new \mock\Symfony\Component\Translation\TranslatorInterface();
+        $mockTranslator = new \mock\Symfony\Contracts\Translation\TranslatorInterface();
 
         $mockConstraintViolationBuilder =
             new \mock\Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface();
@@ -162,7 +162,7 @@ class UniqueEntityValidator extends atoum
     public function testValidateShouldNotBuildANewViolationWithSameEntity()
     {
         $mockValidator = new \mock\Symfony\Component\Validator\Validator\ValidatorInterface();
-        $mockTranslator = new \mock\Symfony\Component\Translation\TranslatorInterface();
+        $mockTranslator = new \mock\Symfony\Contracts\Translation\TranslatorInterface();
 
         $mockConstraintViolationBuilder =
             new \mock\Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface();
@@ -222,7 +222,7 @@ class UniqueEntityValidator extends atoum
     public function testValidateShouldBuildANewViolationWithIdentityField()
     {
         $mockValidator = new \mock\Symfony\Component\Validator\Validator\ValidatorInterface();
-        $mockTranslator = new \mock\Symfony\Component\Translation\TranslatorInterface();
+        $mockTranslator = new \mock\Symfony\Contracts\Translation\TranslatorInterface();
 
         $mockConstraintViolationBuilder =
             new \mock\Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface();

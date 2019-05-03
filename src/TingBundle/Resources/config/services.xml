@@ -39,6 +39,9 @@
             <call method="setConfig">
                 <argument>%ting.connections%</argument>
             </call>
+            <call method="setDatabaseOptions">
+                <argument>%ting.database_options%</argument>
+            </call>
         </service>
 
         <service id="ting.unitofwork" class="CCMBenchmark\Ting\UnitOfWork" public="true">
