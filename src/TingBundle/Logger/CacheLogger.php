@@ -62,12 +62,12 @@ class CacheLogger implements CacheLoggerInterface
      */
     public function startOperation($operation, $keys)
     {
+        if (is_array($keys) === false) {
+            $keys = [$keys];
+        }
+
         if ($this->stopwatch !== null) {
             $this->stopwatch->start('cache_operation', 'ting');
-
-            if (is_array($keys) === false) {
-                $keys = [$keys];
-            }
 
             $this->operations[++$this->operationIndex] = [
                 'type'       => $operation,

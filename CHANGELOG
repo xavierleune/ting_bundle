@@ -1,3 +1,6 @@
+3.4.1 (2019-06-14):
+    * Fix bug in cache logger
+
 3.4.0 (2019-05-03):
     * Added requirement to php 7.1 and ting 3.5 minimum
     * Add support for database timezone
