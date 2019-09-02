@@ -1,3 +1,6 @@
+3.4.2 (2019-09-02):
+    * Configuration is now compatible with Symfony 4.3
+
 3.4.1 (2019-06-14):
     * Fix bug in cache logger
 
