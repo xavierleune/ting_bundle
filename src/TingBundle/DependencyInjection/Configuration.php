@@ -33,8 +33,8 @@ class Configuration implements ConfigurationInterface
 
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('ting');
+        $treeBuilder = new TreeBuilder('ting');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()
