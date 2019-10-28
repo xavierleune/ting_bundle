@@ -1,6 +1,6 @@
 {
     "name": "ccmbenchmark/ting_bundle",
-    "description" : "Symfony 2 bundle for ccmbenchmark/ting",
+    "description" : "Symfony bundle for ccmbenchmark/ting. Provides an interface to use a lightweight datamapper in symfony.",
     "type": "symfony-bundle",
     "license": "Apache-2.0",
     "require": {
