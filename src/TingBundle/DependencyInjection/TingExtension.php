@@ -24,6 +24,7 @@
 
 namespace CCMBenchmark\TingBundle\DependencyInjection;
 
+use Doctrine\Common\Cache\VoidCache;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
@@ -35,17 +36,8 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Validator\Constraints\File;
 
-class TingExtension extends Extension implements PrependExtensionInterface
+class TingExtension extends Extension
 {
-
-    public function prepend(ContainerBuilder $container)
-    {
-        $container->prependExtensionConfig(
-            'doctrine_cache',
-            ['providers'=> ['ting_cache_void' => ['type' => 'void']]]
-        );
-    }
-
     public function load(array $configs, ContainerBuilder $container)
     {
         $xmlLoader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
@@ -65,6 +57,12 @@ class TingExtension extends Extension implements PrependExtensionInterface
         if (isset($config['cache_provider']) === true) {
             $definition->addMethodCall('setCache', [new Reference($config['cache_provider'])]);
         } else {
+            $void = new Definition(VoidCache::class);
+            $void
+                ->setAutoconfigured(false)
+                ->setAutoconfigured(false)
+            ;
+            $container->setDefinition('doctrine_cache.providers.ting_cache_void', $void);
             $definition->addMethodCall('setCache', [new Reference('doctrine_cache.providers.ting_cache_void')]);
         }
 

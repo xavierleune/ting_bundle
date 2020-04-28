@@ -48,11 +48,11 @@ class TingCacheDataCollector extends DataCollector
      *
      * @param Request    $request A Request instance
      * @param Response   $response A Response instance
-     * @param \Exception $exception An Exception instance
+     * @param \Throwable $exception An Exception instance
      *
      * @api
      */
-    public function collect(Request $request, Response $response, \Exception $exception = null)
+    public function collect(Request $request, Response $response, \Throwable $exception = null)
     {
         if ($this->cacheLogger !== null) {
             $this->data['cache']['operations'] = $this->cacheLogger->getOperations();

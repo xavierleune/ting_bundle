@@ -10,7 +10,8 @@ jobs:
     strategy:
       matrix:
         php: ['7.2', '7.3', '7.4']
-    name: Run Unit Tests on PHP ${{ matrix.php }}
+        deps: ['latest', 'lowest']
+    name: Run Unit Tests on PHP ${{ matrix.php }} with ${{ matrix.deps }} dependencies
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -23,7 +24,11 @@ jobs:
           tools: composer:v1, pecl
 
       - name: Install vendors
-        run: composer install --prefer-source --no-interaction
+        run: composer install --prefer-source --no-interaction 
+      
+      - name: Install lowest deps
+        run: composer update --prefer-source --no-interaction --prefer-lowest
+        if: ${{ matrix.deps }} == "lowest"
 
       - name: Run Atoum tests
         run: php vendor/bin/atoum

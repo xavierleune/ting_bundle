@@ -6,7 +6,6 @@ Installation
 2. Load Bundles in AppKernel.php
 
 ```php
-    new Doctrine\Bundle\DoctrineCacheBundle\DoctrineCacheBundle(),
     new CCMBenchmark\TingBundle\TingBundle(),
 ```
 
