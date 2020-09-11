@@ -28,8 +28,9 @@ use CCMBenchmark\Ting\Logger\DriverLoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
+use Symfony\Component\HttpKernel\DataCollector\LateDataCollectorInterface;
 
-class TingDriverDataCollector extends DataCollector
+class TingDriverDataCollector extends DataCollector implements LateDataCollectorInterface
 {
     /**
      * @var DriverLoggerInterface|null
@@ -53,6 +54,28 @@ class TingDriverDataCollector extends DataCollector
      * @api
      */
     public function collect(Request $request, Response $response, \Exception $exception = null)
+    {
+        if ($this->driverLogger !== null) {
+            $this->data['driver']['queries'] = $this->driverLogger->getQueries();
+            $this->data['driver']['execs'] = $this->driverLogger->getExecs();
+            $this->data['driver']['queryCount'] = count($this->data['driver']['queries']);
+            $this->data['driver']['time'] = $this->driverLogger->getTotalTime();
+            $this->data['driver']['connections'] = $this->driverLogger->getConnections();
+            $this->data['driver']['connectionsHashToName'] = $this->driverLogger->getConnectionsHashToName();
+
+            // HttpKernel < 3.2 compatibility layer
+            // For >= 3.2 cloneVar is always present and MUST be used.
+            if (method_exists($this, 'cloneVar')) {
+                foreach ($this->data['driver']['queries'] as &$query) {
+                    if (isset($query['params']) === true) {
+                        $query['params'] = $this->cloneVar($query['params']);
+                    }
+                }
+            }
+        }
+    }
+
+    public function lateCollect()
     {
         if ($this->driverLogger !== null) {
             $this->data['driver']['queries'] = $this->driverLogger->getQueries();

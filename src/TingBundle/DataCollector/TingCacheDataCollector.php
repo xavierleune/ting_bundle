@@ -28,8 +28,9 @@ use CCMBenchmark\Ting\Logger\CacheLoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
+use Symfony\Component\HttpKernel\DataCollector\LateDataCollectorInterface;
 
-class TingCacheDataCollector extends DataCollector
+class TingCacheDataCollector extends DataCollector implements LateDataCollectorInterface
 {
     /**
      * @var CacheLoggerInterface|null
@@ -55,6 +56,18 @@ class TingCacheDataCollector extends DataCollector
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
         if ($this->cacheLogger !== null) {
+            $this->data['cache']['operations'] = $this->cacheLogger->getOperations();
+            $this->data['cache']['operationsCount'] = count($this->data['cache']['operations']);
+            $this->data['cache']['time'] = $this->cacheLogger->getTotalTime();
+            $this->data['cache']['hits'] = $this->cacheLogger->getHits();
+            $this->data['cache']['miss'] = $this->cacheLogger->getMiss();
+        }
+    }
+
+    public function lateCollect()
+    {
+        if ($this->cacheLogger !== null) {
+            dump($this->cacheLogger);
             $this->data['cache']['operations'] = $this->cacheLogger->getOperations();
             $this->data['cache']['operationsCount'] = count($this->data['cache']['operations']);
             $this->data['cache']['time'] = $this->cacheLogger->getTotalTime();
