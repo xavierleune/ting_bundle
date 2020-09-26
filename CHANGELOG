@@ -1,3 +1,6 @@
+3.4.3 (unreleased):
+    * Datacollectors implements LateDataCollectorInterface
+
 3.4.2 (2019-09-02):
     * Configuration is now compatible with Symfony 4.3
 
