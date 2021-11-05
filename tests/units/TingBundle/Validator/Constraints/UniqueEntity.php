@@ -24,10 +24,9 @@
 
 namespace tests\units\CCMBenchmark\TingBundle\Validator\Constraints;
 
-use mageekguy\atoum;
 use Symfony\Component\Validator\Constraint;
 
-class UniqueEntity extends atoum
+class UniqueEntity extends \atoum
 {
     public function testGetTargetShouldReturnClassConstraint()
     {

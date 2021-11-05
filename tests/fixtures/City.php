@@ -26,7 +26,6 @@ namespace tests\fixtures;
 
 use CCMBenchmark\Ting\Entity\NotifyProperty;
 use CCMBenchmark\Ting\Entity\NotifyPropertyInterface;
-use mageekguy\atoum\asserters\integer;
 
 class City
 {
