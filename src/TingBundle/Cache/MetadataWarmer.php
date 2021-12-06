@@ -71,7 +71,7 @@ class MetadataWarmer implements CacheWarmerInterface
      *
      * @param string $cacheDir The cache directory
      */
-    public function warmUp($cacheDir)
+    public function warmUp($cacheDir): array
     {
         $repositories = [];
         foreach ($this->repositories as $key => $bundle) {
@@ -95,7 +95,8 @@ class MetadataWarmer implements CacheWarmerInterface
             $cacheDir,
             $this->cacheFile
         );
-        $metadataCacheGenerator->createCache($repositories);
+
+        return [$metadataCacheGenerator->createCache($repositories)];
     }
 
     /**
