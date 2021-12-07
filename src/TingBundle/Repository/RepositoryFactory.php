@@ -25,7 +25,6 @@
 namespace CCMBenchmark\TingBundle\Repository;
 
 use CCMBenchmark\TingBundle\ConfigurationResolver\ConfigurationResolverInterface;
-use Doctrine\Common\Cache\Cache;
 use Symfony\Component\HttpKernel\Config\FileLocator;
 
 class RepositoryFactory extends \CCMBenchmark\Ting\Repository\RepositoryFactory

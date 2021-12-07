@@ -24,9 +24,6 @@
 
 namespace tests\fixtures;
 
-use CCMBenchmark\Ting\Entity\NotifyProperty;
-use CCMBenchmark\Ting\Entity\NotifyPropertyInterface;
-
 class City
 {
     /**

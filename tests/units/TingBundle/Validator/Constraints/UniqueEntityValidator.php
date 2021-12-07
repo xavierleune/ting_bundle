@@ -25,7 +25,6 @@
 namespace tests\units\CCMBenchmark\TingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraints\Blank;
-use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use tests\fixtures\City;
 
