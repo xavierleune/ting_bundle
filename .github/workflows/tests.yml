@@ -2,34 +2,44 @@ name: Tests
 
 on:
   push:
+    branches:
+      - "master"
   pull_request:
 
 jobs:
   run:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: ['7.2', '7.3', '7.4', '8.0', '8.1']
-        deps: ['latest', 'lowest']
-        composer: ['v1', 'v2']
-    name: Run Unit Tests on PHP ${{ matrix.php }} with ${{ matrix.deps }} dependencies
+        php:
+          - 7.2
+          - 7.3
+          - 7.4
+          - 8.0
+          - 8.1
+          - 8.2
+        deps:
+          - highest
+          - lowest
+        composer:
+          - v1
+          - v2
+    name: Unit tests (PHP ${{ matrix.php }}, composer ${{ matrix.composer }}, ${{ matrix.deps }} dependencies)
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: "${{ matrix.php }}"
           extensions: bcmath, bz2, gettext, mbstring, memcached, mcrypt, mysqli, opcache, pdo_mysql, zip, pdo, intl, json, pdo_pgsql, pgsql, session, simplexml, xml
-          tools: composer:${{ matrix.composer }}, pecl
+          tools: "composer:${{ matrix.composer }}, pecl"
 
-      - name: Install vendors
-        run: composer install --prefer-source --no-interaction 
-      
-      - name: Install lowest deps
-        run: composer update --prefer-source --no-interaction --prefer-lowest
-        if: ${{ matrix.deps }} == "lowest"
+      - name: "Install ${{ matrix.dependencies }} dependencies with composer"
+        uses: "ramsey/composer-install@v2"
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
 
       - name: Run Atoum tests
         run: php vendor/bin/atoum
