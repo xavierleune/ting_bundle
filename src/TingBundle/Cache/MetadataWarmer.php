@@ -47,6 +47,11 @@ class MetadataWarmer implements CacheWarmerInterface
     protected $repositories;
 
     /**
+     * @var string
+     */
+    protected $cacheFile;
+
+    /**
      * MetadataWarmer constructor.
      *
      * @param MetadataRepository $metadataRepository
