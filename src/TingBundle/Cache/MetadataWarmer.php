@@ -105,17 +105,10 @@ class MetadataWarmer implements CacheWarmerInterface
     }
 
     /**
-     * Checks whether this warmer is optional or not.
-     *
-     * Optional warmers can be ignored on certain conditions.
-     *
-     * A warmer should return true if the cache can be
-     * generated incrementally and on-demand.
-     *
-     * @return bool    true if the warmer is optional, false otherwise
+     * @inheritdoc
      */
     public function isOptional()
     {
-        return true;
+        return false;
     }
 }
