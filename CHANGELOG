@@ -1,3 +1,6 @@
+3.6.1 (2023-03-06):
+    * Mark cache warmer as not optional
+
 3.6.0 (2023-02-27):
     * Drop support of SF <4.4 and php <7.2
     * Add MetadataClearer to purge Metadatas while running SF cache:clear command
