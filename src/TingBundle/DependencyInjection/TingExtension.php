@@ -92,7 +92,7 @@ class TingExtension extends Extension
                         'int' => 'int',
                         'float' => 'double',
                         'bool' => 'bool',
-                        \DateTimeImmutable::class => 'datetime',
+                        \DateTimeImmutable::class => 'datetime', ## todo datetime_immutable, pending PR on that
                         \DateTime::class => 'datetime',
                         \DateTimeZone::class => 'datetimezone',
                         Uuid::class => 'uuid',
