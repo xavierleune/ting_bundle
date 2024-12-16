@@ -24,7 +24,11 @@
 
 namespace CCMBenchmark\TingBundle\DependencyInjection;
 
+use CCMBenchmark\Ting\Repository\Metadata;
+use CCMBenchmark\Ting\Schema\Column;
+use CCMBenchmark\Ting\Schema\Table;
 use Doctrine\Common\Cache\VoidCache;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
@@ -32,6 +36,7 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Uid\Uuid;
 
 class TingExtension extends Extension
 {
@@ -48,8 +53,60 @@ class TingExtension extends Extension
         $container->setParameter('ting.repositories', $config['repositories']);
         $container->setParameter('ting.connections', $config['connections']);
         $container->setParameter('ting.database_options', $config['databases_options']);
-
-
+        
+        $metadataRepository = $container->getDefinition('ting.metadatarepository');
+        $container->registerAttributeForAutoconfiguration(Table::class, static function(ChildDefinition $definition, Table $attribute, \ReflectionClass $reflector) use ($container, $metadataRepository): void {
+            //dump($attribute, $reflector);
+            $newMetadata = new Definition(Metadata::class);
+            $newMetadata->addArgument(new Reference('ting.serializerfactory'));
+            $newMetadata->addMethodCall('setEntity', [$reflector->name]);
+            $newMetadata->addMethodCall('setTable', [$attribute->name]);
+            $newMetadata->addMethodCall('setDatabase', [$attribute->database]);
+            $newMetadata->addMethodCall('setConnectionName', [$attribute->connection]);
+            $newMetadata->addMethodCall('setRepository', [$attribute->repository]);
+            
+            foreach ($reflector->getProperties() as $property) {
+                $mappingAttributes = $property->getAttributes(Column::class, \ReflectionAttribute::IS_INSTANCEOF);
+                if (count($mappingAttributes) === 0) {
+                    continue;
+                }
+                if (count($mappingAttributes) > 1) {
+                    throw new \RuntimeException(sprintf('Property %s from class %s cannot have multiple mapping attributes, currently %d', $property->getName(), $attribute->name, count($mappingAttributes)));
+                }
+                $mappingAttribute = $mappingAttributes[0];
+                
+                $newField = [
+                    'fieldName' => $property->getName(),
+                    'columnName' => $property->getName(), // @todo property truc bidule pour les snake case ?
+                ];
+                if ($mappingAttribute->getArguments()['autoIncrement'] ?? false) {
+                    $newField['autoIncrement'] = true;
+                }
+                if ($mappingAttribute->getArguments()['primary'] ?? false) {
+                    $newField['primary'] = true;
+                }
+                
+                try {
+                    $newField['type'] = match ($property->getType()->getName()) {
+                        'string' => 'string',
+                        'int' => 'int',
+                        'float' => 'double',
+                        'bool' => 'bool',
+                        \DateTimeImmutable::class => 'datetime',
+                        \DateTime::class => 'datetime',
+                        \DateTimeZone::class => 'datetimezone',
+                        Uuid::class => 'uuid',
+                        default => 'string'
+                    };
+                } catch (\UnhandledMatchError) {
+                    if (is_subclass_of($property->getType()->getName(), '\Brick\Geo\Geometry')) {
+                        $newField['type'] = 'geometry';
+                    }
+                }
+                $newMetadata->addMethodCall('addField', [$newField]);
+            }
+            $metadataRepository->addMethodCall('addMetadata', [$attribute->repository, $newMetadata]);
+        });
         $definition = $container->getDefinition('ting.cache');
         if (isset($config['cache_provider']) === true) {
             $definition->addMethodCall('setCache', [new Reference($config['cache_provider'])]);
