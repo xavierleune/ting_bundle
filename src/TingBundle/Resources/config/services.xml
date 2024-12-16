@@ -25,12 +25,15 @@
         <service id="ting.metadatarepository" class="CCMBenchmark\Ting\MetadataRepository" public="true">
             <argument type="service" id="ting.serializerfactory" />
         </service>
+        <service id="CCMBenchmark\Ting\MetadataRepository" alias="ting.metadatarepository" />
 
         <service id="ting.serializerfactory" class="CCMBenchmark\Ting\Serializer\SerializerFactory" public="true">
         </service>
+        <service id="CCMBenchmark\Ting\Serializer\SerializerFactoryInterface" alias="ting.serializerfactory" />
 
         <service id="ting.queryfactory" class="CCMBenchmark\Ting\Query\QueryFactory" public="true">
         </service>
+        <service id="CCMBenchmark\Ting\Query\QueryFactory" alias="ting.queryfactory" />
 
         <service id="ting.driverlogger" synthetic="true" public="true">
         </service>
@@ -43,12 +46,14 @@
                 <argument>%ting.database_options%</argument>
             </call>
         </service>
+        <service alias="ting.connectionpool" id="CCMBenchmark\Ting\ConnectionPool" />
 
         <service id="ting.unitofwork" class="CCMBenchmark\Ting\UnitOfWork" public="true">
             <argument type="service" id="ting.connectionpool" />
             <argument type="service" id="ting.metadatarepository" />
             <argument type="service" id="ting.queryfactory" />
         </service>
+        <service id="CCMBenchmark\Ting\UnitOfWork" alias="ting.unitofwork" />
 
         <service id="ting.hydrator" class="CCMBenchmark\Ting\Repository\Hydrator" shared="false" public="true">
             <call method="setMetadataRepository">
@@ -73,9 +78,11 @@
             <argument type="service" id="ting.unitofwork" />
             <argument type="service" id="ting.hydrator" />
         </service>
+        <service id="CCMBenchmark\Ting\Repository\CollectionFactory" alias="ting.collectionfactory" />
 
         <service id="ting.cache" class="CCMBenchmark\Ting\Cache\Cache" public="true">
         </service>
+        <service id="Doctrine\Common\Cache\Cache" alias="ting.cache" />
 
         <service id="ting.driver_data_collector" class="CCMBenchmark\TingBundle\DataCollector\TingDriverDataCollector" public="true">
             <tag name="data_collector" template="@Ting/Collector/driverCollector.html.twig" id="ting.driver" />
