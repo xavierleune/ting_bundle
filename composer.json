@@ -7,11 +7,11 @@
         "php": ">=7.2",
         "ccmbenchmark/ting": "^3.5",
         "doctrine/cache": "^1.10",
-        "symfony/validator": "^4.4 || ^5.0 || ^6.0",
-        "symfony/http-kernel": "^4.4 || ^5.0 || ^6.0",
-        "symfony/dependency-injection": "^4.4 || ^5.0 || ^6.0",
-        "symfony/config": "^4.4 || ^5.0 || ^6.0",
-        "symfony/stopwatch": "^4.4 || ^5.0 || ^6.0"
+        "symfony/validator": "^4.4 || ^5.0 || ^6.0 || ^7.0",
+        "symfony/http-kernel": "^4.4 || ^5.0 || ^6.0 || ^7.0",
+        "symfony/dependency-injection": "^4.4 || ^5.0 || ^6.0 || ^7.0",
+        "symfony/config": "^4.4 || ^5.0 || ^6.0 || ^7.0",
+        "symfony/stopwatch": "^4.4 || ^5.0 || ^6.0 || ^7.0"
     },
     "require-dev": {
         "atoum/atoum": "^4.0",
