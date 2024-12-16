@@ -12,17 +12,14 @@ jobs:
     strategy:
       matrix:
         php:
-          - 7.2
-          - 7.3
-          - 7.4
-          - 8.0
           - 8.1
           - 8.2
+          - 8.3
+          - 8.4
         deps:
           - highest
           - lowest
         composer:
-          - v1
           - v2
     name: Unit tests (PHP ${{ matrix.php }}, composer ${{ matrix.composer }}, ${{ matrix.deps }} dependencies)
     steps:
@@ -36,10 +33,10 @@ jobs:
           extensions: bcmath, bz2, gettext, mbstring, memcached, mcrypt, mysqli, opcache, pdo_mysql, zip, pdo, intl, json, pdo_pgsql, pgsql, session, simplexml, xml
           tools: "composer:${{ matrix.composer }}, pecl"
 
-      - name: "Install ${{ matrix.dependencies }} dependencies with composer"
+      - name: "Install ${{ matrix.deps }} deps with composer"
         uses: "ramsey/composer-install@v2"
         with:
-          dependency-versions: "${{ matrix.dependencies }}"
+          dependency-versions: "${{ matrix.deps }}"
 
       - name: Run Atoum tests
         run: php vendor/bin/atoum

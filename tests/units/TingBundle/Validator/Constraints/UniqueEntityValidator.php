@@ -279,18 +279,6 @@ class UniqueEntityValidator extends \atoum
         ;
     }
 
-    public function testGetDefaultOption()
-    {
-        $this->mockGenerator->orphanize('__construct');
-
-        $this
-            ->if($mockUniqueEntity = new \mock\CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity())
-            ->then
-                ->array($mockUniqueEntity->getDefaultOption())
-                    ->isIdenticalTo(['fields', 'repository'])
-        ;
-    }
-
     private function getMockMetadata()
     {
         $this->mockGenerator()->orphanize('__construct');

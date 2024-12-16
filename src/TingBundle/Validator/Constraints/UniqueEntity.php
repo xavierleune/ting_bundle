@@ -57,7 +57,7 @@ class UniqueEntity extends Constraint
     /**
      * @return string
      */
-    public function getTargets()
+    public function getTargets(): array|string
     {
         return self::CLASS_CONSTRAINT;
     }
@@ -65,15 +65,7 @@ class UniqueEntity extends Constraint
     /**
      * @return array
      */
-    public function getRequiredOptions()
-    {
-        return ['fields', 'repository'];
-    }
-
-    /**
-     * @return array
-     */
-    public function getDefaultOption()
+    public function getRequiredOptions(): array
     {
         return ['fields', 'repository'];
     }

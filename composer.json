@@ -4,7 +4,7 @@
     "type": "symfony-bundle",
     "license": "Apache-2.0",
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.1",
         "ccmbenchmark/ting": "^3.5",
         "doctrine/cache": "^1.10",
         "symfony/validator": "^4.4 || ^5.0 || ^6.0 || ^7.0",
@@ -14,7 +14,7 @@
         "symfony/stopwatch": "^4.4 || ^5.0 || ^6.0 || ^7.0"
     },
     "require-dev": {
-        "atoum/atoum": "^4.0",
+        "atoum/atoum": "^4.2",
         "atoum/stubs": "^2.2"
     },
     "autoload": {

@@ -73,10 +73,8 @@ class MetadataWarmer implements CacheWarmerInterface
 
     /**
      * Warms up the cache.
-     *
-     * @param string $cacheDir The cache directory
      */
-    public function warmUp($cacheDir): array
+    public function warmUp($cacheDir, ?string $buildDir = null): array
     {
         $repositories = [];
         foreach ($this->repositories as $key => $bundle) {
@@ -107,7 +105,7 @@ class MetadataWarmer implements CacheWarmerInterface
     /**
      * @inheritdoc
      */
-    public function isOptional()
+    public function isOptional(): bool
     {
         return false;
     }
