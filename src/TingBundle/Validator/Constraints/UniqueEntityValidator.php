@@ -69,8 +69,7 @@ class UniqueEntityValidator extends ConstraintValidator
         $fields  = (array) $constraint->fields;
 
         foreach ($fields as $field) {
-            $getter = $metadata->getGetter($field);
-            $criteria[$field] = $entity->$getter();
+            $criteria[$field] = $metadata->getEntityPropertyByFieldName($entity, $field);
         }
 
         $myEntity = $repository->getOneBy($criteria);
@@ -81,8 +80,11 @@ class UniqueEntityValidator extends ConstraintValidator
             if ($identityFields !== []) {
                 $validationFailed = false;
                 foreach ($identityFields as $identityField) {
-                    $getter = $metadata->getGetter($identityField);
-                    if ($entity->$getter() !== $myEntity->$getter()) {
+                    if (
+                        $metadata->getEntityPropertyByFieldName($entity, $identityField)
+                         !== 
+                        $metadata->getEntityPropertyByFieldName($myEntity, $identityField)
+                    ) {
                         $validationFailed = true;
                         break;
                     }

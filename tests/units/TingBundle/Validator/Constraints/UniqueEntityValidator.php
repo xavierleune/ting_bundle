@@ -284,8 +284,8 @@ class UniqueEntityValidator extends \atoum
         $this->mockGenerator()->orphanize('__construct');
         $this->mockGenerator()->shuntParentClassCalls();
         $metadata = new \mock\CCMBenchmark\Ting\Repository\Metadata();
-        $this->calling($metadata)->getGetter = function ($fieldName) {
-            return 'get' . $fieldName;
+        $this->calling($metadata)->getEntityPropertyByFieldName = function ($entity, $fieldName) {
+            return $entity->{'get' . $fieldName}();
         };
 
         return $metadata;
