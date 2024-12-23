@@ -24,7 +24,10 @@
 
 namespace CCMBenchmark\TingBundle\DependencyInjection;
 
+use CCMBenchmark\TingBundle\TingBundle;
 use Doctrine\Common\Cache\VoidCache;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
@@ -32,6 +35,7 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class TingExtension extends Extension
 {
@@ -48,8 +52,7 @@ class TingExtension extends Extension
         $container->setParameter('ting.repositories', $config['repositories']);
         $container->setParameter('ting.connections', $config['connections']);
         $container->setParameter('ting.database_options', $config['databases_options']);
-
-
+        
         $definition = $container->getDefinition('ting.cache');
         if (isset($config['cache_provider']) === true) {
             $definition->addMethodCall('setCache', [new Reference($config['cache_provider'])]);
@@ -65,6 +68,17 @@ class TingExtension extends Extension
 
         if ($config['configuration_resolver_service'] !== null) {
             $container->setAlias('ting.configuration_resolver', $config['configuration_resolver_service']);
+        }
+        
+        $propertyAccessDefinition = $container->register('ting.cache.property_access', AdapterInterface::class);
+        if (!$container->getParameter('kernel.debug')) {
+            $propertyAccessDefinition->setFactory([PropertyAccessor::class, 'createCache']);
+            $propertyAccessDefinition->setArguments(['', 0, TingBundle::VERSION, new Reference('logger', ContainerInterface::IGNORE_ON_INVALID_REFERENCE)]);
+            $propertyAccessDefinition->addTag('cache.pool', ['clearer' => 'cache.system_clearer']);
+            $propertyAccessDefinition->addTag('monolog.logger', ['channel' => 'cache']);
+        } else {
+            $propertyAccessDefinition->setClass(ArrayAdapter::class);
+            $propertyAccessDefinition->setArguments([0, false]);
         }
 
         // Adding optional service ting.driverlogger

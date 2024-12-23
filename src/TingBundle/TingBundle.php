@@ -28,5 +28,5 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class TingBundle extends Bundle
 {
-    public const VERSION = '3.5';
+    public const VERSION = '3.8';
 }

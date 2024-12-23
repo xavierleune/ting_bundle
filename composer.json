@@ -4,8 +4,8 @@
     "type": "symfony-bundle",
     "license": "Apache-2.0",
     "require": {
-        "php": ">=7.2",
-        "ccmbenchmark/ting": "^3.5",
+        "php": ">=8.0",
+        "ccmbenchmark/ting": "^3.10",
         "doctrine/cache": "^1.10",
         "symfony/validator": "^4.4 || ^5.0 || ^6.0",
         "symfony/http-kernel": "^4.4 || ^5.0 || ^6.0",
