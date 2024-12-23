@@ -1,3 +1,7 @@
+3.8.0 (unreleased):
+    * Drop support for PHP < 8.1
+    * Allow SF 7
+
 3.7.0 (2023-03-29):
     * log to ting channel instead of app by default
 

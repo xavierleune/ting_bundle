@@ -51,16 +51,4 @@ class UniqueEntity extends \atoum
                     ->isIdenticalTo(['fields', 'repository'])
         ;
     }
-
-    public function testGetDefaultOption()
-    {
-        $this->mockGenerator->orphanize('__construct');
-
-        $this
-            ->if($mockUniqueEntity = new \mock\CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity())
-            ->then
-                ->array($mockUniqueEntity->getDefaultOption())
-                    ->isIdenticalTo(['fields', 'repository'])
-        ;
-    }
 }
