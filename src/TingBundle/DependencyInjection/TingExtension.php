@@ -29,6 +29,9 @@ use CCMBenchmark\TingBundle\Schema\Column;
 use CCMBenchmark\TingBundle\Schema\Table;
 use Doctrine\Common\Cache\VoidCache;
 use Symfony\Component\DependencyInjection\ChildDefinition;
+use CCMBenchmark\TingBundle\TingBundle;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
@@ -37,6 +40,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class TingExtension extends Extension
 {
@@ -78,6 +82,17 @@ class TingExtension extends Extension
 
         if ($config['configuration_resolver_service'] !== null) {
             $container->setAlias('ting.configuration_resolver', $config['configuration_resolver_service']);
+        }
+        
+        $propertyAccessDefinition = $container->register('ting.cache.property_access', AdapterInterface::class);
+        if (!$container->getParameter('kernel.debug')) {
+            $propertyAccessDefinition->setFactory([PropertyAccessor::class, 'createCache']);
+            $propertyAccessDefinition->setArguments(['', 0, TingBundle::VERSION, new Reference('logger', ContainerInterface::IGNORE_ON_INVALID_REFERENCE)]);
+            $propertyAccessDefinition->addTag('cache.pool', ['clearer' => 'cache.system_clearer']);
+            $propertyAccessDefinition->addTag('monolog.logger', ['channel' => 'cache']);
+        } else {
+            $propertyAccessDefinition->setClass(ArrayAdapter::class);
+            $propertyAccessDefinition->setArguments([0, false]);
         }
 
         // Adding optional service ting.driverlogger

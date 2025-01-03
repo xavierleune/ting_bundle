@@ -24,6 +24,7 @@
 
         <service id="ting.metadatarepository" class="CCMBenchmark\Ting\MetadataRepository" public="true">
             <argument type="service" id="ting.serializerfactory" />
+            <argument type="service" id="ting.cache.property_access" />
         </service>
         <service id="CCMBenchmark\Ting\MetadataRepository" alias="ting.metadatarepository" />
 
