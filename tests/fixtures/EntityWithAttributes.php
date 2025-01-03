@@ -2,6 +2,7 @@
 
 namespace tests\fixtures;
 
+use Brick\Geo\Point;
 use CCMBenchmark\TingBundle\Schema\Column;
 use CCMBenchmark\TingBundle\Schema\Table;
 
@@ -29,5 +30,6 @@ class EntityWithAttributes
     #[Column]
     public array $json;
     
-    
+    #[Column]
+    public Point $point;
 }

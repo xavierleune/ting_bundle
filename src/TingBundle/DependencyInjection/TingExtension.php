@@ -152,7 +152,9 @@ class TingExtension extends Extension
                 $newField['primary'] = true;
             }
 
-            try {
+            if (is_subclass_of($property->getType()->getName(), '\Brick\Geo\Geometry')) {
+                $newField['type'] = 'geometry';
+            } else {
                 $newField['type'] = match ($property->getType()->getName()) {
                     'string' => 'string',
                     'int' => 'int',
@@ -165,10 +167,6 @@ class TingExtension extends Extension
                     Uuid::class => 'uuid',
                     default => 'string'
                 };
-            } catch (\UnhandledMatchError) {
-                if (is_subclass_of($property->getType()->getName(), '\Brick\Geo\Geometry')) {
-                    $newField['type'] = 'geometry';
-                }
             }
 
             if ($mappingAttribute->getArguments()['serializer'] ?? false) {

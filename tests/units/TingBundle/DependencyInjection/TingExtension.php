@@ -81,7 +81,8 @@ class TingExtension extends \atoum
                     ['addField', [['fieldName' => 'dateImmutable', 'columnName' => 'date_immutable', 'type' => 'datetime_immutable']]],
                     ['addField', [['fieldName' => 'dateMutable', 'columnName' => 'date_mutable', 'type' => 'datetime']]],
                     ['addField', [['fieldName' => 'timeZone', 'columnName' => 'time_zone', 'type' => 'datetimezone']]],
-                    ['addField', [['fieldName' => 'json', 'columnName' => 'json', 'type' => 'json']]]
+                    ['addField', [['fieldName' => 'json', 'columnName' => 'json', 'type' => 'json']]],
+                    ['addField', [['fieldName' => 'point', 'columnName' => 'point', 'type' => 'geometry']]],
                 ])
         ;
     }
