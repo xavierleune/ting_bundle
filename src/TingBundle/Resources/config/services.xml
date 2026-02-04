@@ -33,6 +33,7 @@
         </service>
 
         <service id="ting.driverlogger" synthetic="true" public="true">
+            <tag name="kernel.reset" method="reset" />
         </service>
 
         <service id="ting.connectionpool" class="CCMBenchmark\Ting\ConnectionPool" public="true">
