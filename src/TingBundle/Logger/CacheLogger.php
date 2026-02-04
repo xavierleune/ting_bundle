@@ -27,8 +27,9 @@ namespace CCMBenchmark\TingBundle\Logger;
 use CCMBenchmark\Ting\Logger\CacheLoggerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
+use Symfony\Contracts\Service\ResetInterface;
 
-class CacheLogger implements CacheLoggerInterface
+class CacheLogger implements CacheLoggerInterface, ResetInterface
 {
     protected $operationIndex = 0;
     protected $operations     = [];
@@ -125,5 +126,14 @@ class CacheLogger implements CacheLoggerInterface
     public function getMiss()
     {
         return $this->miss;
+    }
+
+    public function reset(): void
+    {
+        $this->operationIndex = 0;
+        $this->operations     = [];
+        $this->hits           = 0;
+        $this->miss           = 0;
+        $this->totalTime      = 0;
     }
 }

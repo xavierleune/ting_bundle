@@ -27,8 +27,9 @@ namespace CCMBenchmark\TingBundle\Logger;
 use CCMBenchmark\Ting\Logger\DriverLoggerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
+use Symfony\Contracts\Service\ResetInterface;
 
-class DriverLogger implements DriverLoggerInterface
+class DriverLogger implements DriverLoggerInterface, ResetInterface
 {
     /**
      * @var null|LoggerInterface
@@ -252,5 +253,16 @@ class DriverLogger implements DriverLoggerInterface
     public function getExecs()
     {
         return $this->execs;
+    }
+
+    public function reset(): void
+    {
+        $this->queries = [];
+        $this->execs = [];
+        $this->totalTime = 0;
+        $this->connections = [];
+        $this->connectionsHashToName = [];
+        $this->queryIndex = 0;
+        $this->execIndex = 0;
     }
 }
