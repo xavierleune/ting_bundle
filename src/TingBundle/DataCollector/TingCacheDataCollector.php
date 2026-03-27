@@ -30,8 +30,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use Symfony\Component\HttpKernel\DataCollector\LateDataCollectorInterface;
 use Symfony\Component\VarDumper\Cloner\Data;
+use Symfony\Contracts\Service\ResetInterface;
 
-class TingCacheDataCollector extends DataCollector implements LateDataCollectorInterface
+class TingCacheDataCollector extends DataCollector implements LateDataCollectorInterface, ResetInterface
 {
     /**
      * @var CacheLoggerInterface|null
@@ -105,17 +106,17 @@ class TingCacheDataCollector extends DataCollector implements LateDataCollectorI
 
     public function getCacheTotalTime()
     {
-        return $this->data['cache']['time'];
+        return $this->data['cache']['time'] ?? 0;
     }
 
     public function getHits()
     {
-        return $this->data['cache']['hits'];
+        return $this->data['cache']['hits'] ?? 0;
     }
 
     public function getMiss()
     {
-        return $this->data['cache']['miss'];
+        return $this->data['cache']['miss'] ?? 0;
     }
 
     public function reset()

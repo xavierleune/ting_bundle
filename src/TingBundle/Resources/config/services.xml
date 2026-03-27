@@ -37,6 +37,7 @@
         <service id="CCMBenchmark\Ting\Query\QueryFactory" alias="ting.queryfactory" />
 
         <service id="ting.driverlogger" synthetic="true" public="true">
+            <tag name="kernel.reset" method="reset" />
         </service>
 
         <service id="ting.connectionpool" class="CCMBenchmark\Ting\ConnectionPool" public="true">
@@ -46,6 +47,7 @@
             <call method="setDatabaseOptions">
                 <argument>%ting.database_options%</argument>
             </call>
+            <tag name="kernel.reset" method="reset" />
         </service>
         <service alias="ting.connectionpool" id="CCMBenchmark\Ting\ConnectionPool" />
 
@@ -53,6 +55,7 @@
             <argument type="service" id="ting.connectionpool" />
             <argument type="service" id="ting.metadatarepository" />
             <argument type="service" id="ting.queryfactory" />
+            <tag name="kernel.reset" method="reset" />
         </service>
         <service id="CCMBenchmark\Ting\UnitOfWork" alias="ting.unitofwork" />
 
@@ -87,10 +90,12 @@
 
         <service id="ting.driver_data_collector" class="CCMBenchmark\TingBundle\DataCollector\TingDriverDataCollector" public="true">
             <tag name="data_collector" template="@Ting/Collector/driverCollector.html.twig" id="ting.driver" />
+            <tag name="kernel.reset" method="reset" />
         </service>
 
         <service id="ting.cache_data_collector" class="CCMBenchmark\TingBundle\DataCollector\TingCacheDataCollector" public="true">
             <tag name="data_collector" template="@Ting/Collector/cacheCollector.html.twig" id="ting.cache" />
+            <tag name="kernel.reset" method="reset" />
         </service>
 
         <service id="ting.metadata_warmer" class="CCMBenchmark\TingBundle\Cache\MetadataWarmer" public="true">

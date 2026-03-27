@@ -30,8 +30,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use Symfony\Component\HttpKernel\DataCollector\LateDataCollectorInterface;
 use Symfony\Component\VarDumper\Cloner\Data;
+use Symfony\Contracts\Service\ResetInterface;
 
-class TingDriverDataCollector extends DataCollector implements LateDataCollectorInterface
+class TingDriverDataCollector extends DataCollector implements LateDataCollectorInterface, ResetInterface
 {
     /**
      * @var DriverLoggerInterface|null
@@ -117,32 +118,32 @@ class TingDriverDataCollector extends DataCollector implements LateDataCollector
 
     public function getQueryCount()
     {
-        return $this->data['driver']['queryCount'];
+        return $this->data['driver']['queryCount'] ?? 0;
     }
 
     public function getQueries()
     {
-        return $this->data['driver']['queries'];
+        return $this->data['driver']['queries'] ?? [];
     }
 
     public function getExecs()
     {
-        return $this->data['driver']['execs'];
+        return $this->data['driver']['execs'] ?? [];
     }
 
     public function getTime()
     {
-        return $this->data['driver']['time'];
+        return $this->data['driver']['time'] ?? 0;
     }
 
     public function getConnections()
     {
-        return $this->data['driver']['connections'];
+        return $this->data['driver']['connections'] ?? [];
     }
 
     public function getConnectionsHashToName()
     {
-        return $this->data['driver']['connectionsHashToName'];
+        return $this->data['driver']['connectionsHashToName'] ?? [];
     }
 
     public function reset()
