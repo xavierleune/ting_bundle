@@ -1,3 +1,7 @@
+Unreleased:
+    * Worker mode: loggers, data collectors, connection pool and unit of work are reset between requests (kernel.reset)
+    * Require ccmbenchmark/ting ^3.13
+
 3.10.1 (2025-04-17):
     * Fix: autoincrement fields are now properly registered when using attributes
     * Fix: allow null when using symfony/serializer
