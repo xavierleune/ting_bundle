@@ -1,3 +1,12 @@
+3.12.0 (unreleased):
+    * Package renamed to xavierleune/ting_bundle (replaces ccmbenchmark/ting_bundle)
+    * Require PHP >= 8.2 and Symfony ^7.0, drop support for Symfony 4.4, 5 and 6
+    * Services are now declared in PHP instead of XML (XML configuration is deprecated since Symfony 7.4)
+    * UniqueEntity: use named arguments, passing an array of options is deprecated
+    * Fix: SymfonySerializer now receives the Symfony serializer when available
+    * Fix: MetadataClearer signature is compatible with CacheClearerInterface
+    * ting.entity_value_resolver is now an alias of the resolver registered by the extension (was registered twice)
+
 3.11.0 (2026-09-26):
     * Worker mode: loggers, data collectors, connection pool and unit of work are reset between requests (kernel.reset)
     * Require ccmbenchmark/ting ^3.13

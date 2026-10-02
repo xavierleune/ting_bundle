@@ -5,6 +5,7 @@
  * ==========================================
  *
  * Copyright (C) 2014 CCM Benchmark Group. (http://www.ccmbenchmark.com)
+ * Copyright (C) 2026 Xavier Leune
  *
  ***********************************************************************
  *
@@ -37,12 +38,10 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use Symfony\Component\HttpKernel\Attribute\ValueResolver;
-use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Uid\Uuid;
@@ -52,8 +51,8 @@ class TingExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
-        $xmlLoader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $xmlLoader->load('services.xml');
+        $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->load('services.php');
 
         $configuration = new Configuration();
 
@@ -65,13 +64,10 @@ class TingExtension extends Extension
         $container->setParameter('ting.database_options', $config['databases_options']);
         
         $metadataRepository = $container->getDefinition('ting.metadatarepository');
-        if (method_exists($container, 'registerAttributeForAutoconfiguration') === true) {
-            // SF 5.4+
-            $container->registerAttributeForAutoconfiguration(Table::class, function(ChildDefinition $definition, Table $attribute, \ReflectionClass $reflector) use ($container, $metadataRepository): void {
-                $newMetadata = $this->getMetadata($reflector, $attribute);
-                $metadataRepository->addMethodCall('addMetadata', [$attribute->repository, $newMetadata]);
-            });
-        }
+        $container->registerAttributeForAutoconfiguration(Table::class, function(ChildDefinition $definition, Table $attribute, \ReflectionClass $reflector) use ($metadataRepository): void {
+            $newMetadata = $this->getMetadata($reflector, $attribute);
+            $metadataRepository->addMethodCall('addMetadata', [$attribute->repository, $newMetadata]);
+        });
         
         $definition = $container->getDefinition('ting.cache');
         if (isset($config['cache_provider']) === true) {
@@ -136,24 +132,22 @@ class TingExtension extends Extension
             $definition->addMethodCall('setCacheLogger', [$reference]);
         }
 
-        if (interface_exists(ValueResolverInterface::class) && class_exists(ValueResolver::class)) {
-            if (class_exists(ExpressionLanguage::class)) {
-                $definition = new Definition(ExpressionLanguage::class);
-                $definition->addArgument(new Reference('cache.app'));
-                $container->setDefinition('ting.expression_language', $definition);
-            }
-            
-            $definition = new Definition(EntityValueResolver::class);
-            $definition->setArguments([
-                new Reference('ting.metadatarepository'),
-                new Reference('ting'),
-                new Reference('ting.expression_language', ContainerInterface::NULL_ON_INVALID_REFERENCE)
-            ]);
-
-            $definition->addTag('controller.argument_value_resolver', ['priority' => 110]);
-
-            $container->setDefinition(EntityValueResolver::class, $definition);
+        if (class_exists(ExpressionLanguage::class)) {
+            $definition = new Definition(ExpressionLanguage::class);
+            $definition->addArgument(new Reference('cache.app'));
+            $container->setDefinition('ting.expression_language', $definition);
         }
+        
+        $definition = new Definition(EntityValueResolver::class);
+        $definition->setArguments([
+            new Reference('ting.metadatarepository'),
+            new Reference('ting'),
+            new Reference('ting.expression_language', ContainerInterface::NULL_ON_INVALID_REFERENCE)
+        ]);
+
+        $definition->addTag('controller.argument_value_resolver', ['priority' => 110]);
+
+        $container->setDefinition(EntityValueResolver::class, $definition);
 
         $serializerFactoryDefinition = $container->getDefinition('ting.serializerfactory');
         foreach ($container->findTaggedServiceIds('ting.serializer') as $id => $tags) {

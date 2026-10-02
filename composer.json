@@ -7,25 +7,26 @@
         "ccmbenchmark/ting_bundle": "self.version"
     },
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "ccmbenchmark/ting": "^3.13",
         "doctrine/cache": "^1.10",
-        "symfony/validator": "^4.4 || ^5.0 || ^6.0 || ^7.0",
-        "symfony/http-kernel": "^4.4 || ^5.0 || ^6.0 || ^7.0",
-        "symfony/dependency-injection": "^4.4 || ^5.0 || ^6.0 || ^7.0",
-        "symfony/config": "^4.4 || ^5.0 || ^6.0 || ^7.0",
-        "symfony/stopwatch": "^4.4 || ^5.0 || ^6.0 || ^7.0",
-        "symfony/service-contracts": "^1.0 || ^2.0 || ^3.0"
+        "symfony/validator": "^7.0",
+        "symfony/http-kernel": "^7.0",
+        "symfony/dependency-injection": "^7.0",
+        "symfony/config": "^7.0",
+        "symfony/stopwatch": "^7.0",
+        "symfony/service-contracts": "^2.5 || ^3.0",
+        "symfony/deprecation-contracts": "^2.5 || ^3.0"
     },
     "require-dev": {
-        "atoum/atoum": "^4.2",
+        "atoum/atoum": "^4.4",
         "atoum/stubs": "^2.2",
-        "brick/geo": ">=0.5 <=1.0",
-        "symfony/expression-language": "^6.3 || ^7.2",
-        "symfony/serializer": "^6.0 || ^7.0",
-        "symfony/security-bundle": "^6.0 || ^7.0",
-        "symfony/security-core": "^6.0 || ^7.0",
-        "symfony/uid": "^6.0 || ^7.0"
+        "brick/geo": "0.13.*",
+        "symfony/expression-language": "^7.2",
+        "symfony/serializer": "^7.0",
+        "symfony/security-bundle": "^7.0",
+        "symfony/security-core": "^7.0",
+        "symfony/uid": "^7.0"
     },
     "autoload": {
         "psr-4" : {

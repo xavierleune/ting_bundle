@@ -69,8 +69,7 @@ class UniqueEntityValidator extends \atoum
         };
         $mockExecutionContext->setConstraint(new \mock\Symfony\Component\Validator\Constraint());
 
-        $this->mockGenerator->orphanize('__construct');
-        $mockUniqueEntity = new \mock\CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity();
+        $mockUniqueEntity = new \mock\CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity(fields: [], repository: 'FakeRepository');
 
         $mockFakeRepository = new \mock\FakeRepository;
         $this->calling($mockFakeRepository)->getOneBy = function ($params) {
@@ -126,8 +125,7 @@ class UniqueEntityValidator extends \atoum
         };
         $mockExecutionContext->setConstraint(new \mock\Symfony\Component\Validator\Constraint());
 
-        $this->mockGenerator->orphanize('__construct');
-        $mockUniqueEntity = new \mock\CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity();
+        $mockUniqueEntity = new \mock\CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity(fields: [], repository: 'FakeRepository');
 
         $mockFakeRepository = new \mock\FakeRepository;
         $this->calling($mockFakeRepository)->getOneBy = function ($params) {
@@ -181,8 +179,7 @@ class UniqueEntityValidator extends \atoum
         };
         $mockExecutionContext->setConstraint(new \mock\Symfony\Component\Validator\Constraint());
 
-        $this->mockGenerator->orphanize('__construct');
-        $mockUniqueEntity = new \mock\CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity();
+        $mockUniqueEntity = new \mock\CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity(fields: [], repository: 'FakeRepository');
         $mockUniqueEntity->identityFields = ['id'];
 
         $mockFakeRepository = new \mock\FakeRepository;
@@ -241,8 +238,7 @@ class UniqueEntityValidator extends \atoum
         };
         $mockExecutionContext->setConstraint(new \mock\Symfony\Component\Validator\Constraint());
 
-        $this->mockGenerator->orphanize('__construct');
-        $mockUniqueEntity = new \mock\CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity();
+        $mockUniqueEntity = new \mock\CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity(fields: [], repository: 'FakeRepository');
         $mockUniqueEntity->identityFields = ['id'];
 
         $mockFakeRepository = new \mock\FakeRepository;

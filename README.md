@@ -6,6 +6,8 @@
 Installation
 ============
 
+Requires PHP 8.2+ and Symfony 7.
+
 1. Require Ting Bundle with
     ```composer require xavierleune/ting_bundle```
 2. Load Bundles in AppKernel.php
@@ -210,7 +212,8 @@ It needs to implement `__serialize` too.
 ## Declare a Unique constraint in a table
 If you use the component `symfony/validator`, you may need to ensure that a value (or a combination of them) is unique in your table.
 
-You can use the Constraint `CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity` to do so. In can be used as an annotation, or as an attribute.
+You can use the Constraint `CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity` to do so, as an attribute with named arguments (`fields`, `repository`, and optionally `identityFields`, `message`, `groups`, `payload`).
+Passing an array of options (`options: [...]`) is deprecated since 3.12.
 
 Example:
 ```php
@@ -227,7 +230,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Table(name: 'users', connection: 'main', database: '%env(DATABASE_DB_NAME)%', repository: UserRepository::class)]
-#[UniqueEntity(options:['repository' => UserRepository::class, 'fields' => ['email']], groups: ['create'])]
+#[UniqueEntity(fields: ['email'], repository: UserRepository::class, groups: ['create'])]
 class User implements UserInterface, NotifyPropertyInterface {
     #[Column(autoIncrement: true, primary: true)]
     public int $id { set(int $id) {
