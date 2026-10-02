@@ -5,6 +5,7 @@
  * ==========================================
  *
  * Copyright (C) 2014 CCM Benchmark Group. (http://www.ccmbenchmark.com)
+ * Copyright (C) 2026 Xavier Leune
  *
  ***********************************************************************
  *
@@ -24,50 +25,79 @@
 
 namespace CCMBenchmark\TingBundle\Validator\Constraints;
 
+use Symfony\Component\Validator\Attribute\HasNamedArguments;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Exception\InvalidOptionsException;
+use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 /**
- * Class UniqueEntity
- *
- * @Annotation
- * @Target({"CLASS", "ANNOTATION"})
+ * Checks that no other entity in the repository shares the values of the given fields.
  */
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class UniqueEntity extends Constraint
 {
-    /**
-     * @var string
-     */
-    public $message = 'Another entity exists for this data: {{ data }}';
+    public string $message = 'Another entity exists for this data: {{ data }}';
+
+    public string $repository;
 
     /**
-     * @var string
+     * @var string|string[]
      */
-    public $repository;
+    public array|string $fields = [];
 
     /**
-     * @var array
+     * @var string|string[]
      */
-    public $fields = array();
+    public array|string $identityFields = [];
 
     /**
-     * @var array
+     * @param array<string, mixed>|null $options        deprecated, use named arguments instead
+     * @param string|string[]|null      $fields         fields that must be unique together
+     * @param string|null               $repository     repository class used to look for an existing entity
+     * @param string|string[]|null      $identityFields fields identifying the validated entity itself (ignored when equal)
+     * @param string[]|null             $groups
      */
-    public $identityFields = array();
+    #[HasNamedArguments]
+    public function __construct(
+        ?array $options = null,
+        array|string|null $fields = null,
+        ?string $repository = null,
+        array|string|null $identityFields = null,
+        ?string $message = null,
+        ?array $groups = null,
+        mixed $payload = null,
+    ) {
+        if ($options !== null) {
+            trigger_deprecation('xavierleune/ting_bundle', '3.12', 'Passing an array of options to configure the "%s" constraint is deprecated, use named arguments instead.', static::class);
 
-    /**
-     * @return string
-     */
-    public function getTargets(): array|string
-    {
-        return self::CLASS_CONSTRAINT;
+            $unknownOptions = array_diff(array_keys($options), ['fields', 'repository', 'identityFields', 'message', 'groups', 'payload']);
+            if ($unknownOptions !== []) {
+                throw new InvalidOptionsException(sprintf('The options "%s" do not exist in constraint "%s".', implode('", "', $unknownOptions), static::class), $unknownOptions);
+            }
+
+            $fields ??= $options['fields'] ?? null;
+            $repository ??= $options['repository'] ?? null;
+            $identityFields ??= $options['identityFields'] ?? null;
+            $message ??= $options['message'] ?? null;
+            $groups ??= $options['groups'] ?? null;
+            $payload ??= $options['payload'] ?? null;
+        }
+
+        $missingOptions = array_keys(array_filter(['fields' => $fields, 'repository' => $repository], fn ($value) => $value === null));
+        if ($missingOptions !== []) {
+            throw new MissingOptionsException(sprintf('The options "%s" must be set for constraint "%s".', implode('", "', $missingOptions), static::class), $missingOptions);
+        }
+
+        parent::__construct(null, $groups, $payload);
+
+        $this->fields = $fields;
+        $this->repository = $repository;
+        $this->identityFields = $identityFields ?? $this->identityFields;
+        $this->message = $message ?? $this->message;
     }
 
-    /**
-     * @return array
-     */
-    public function getRequiredOptions(): array
+    public function getTargets(): string
     {
-        return ['fields', 'repository'];
+        return self::CLASS_CONSTRAINT;
     }
 }

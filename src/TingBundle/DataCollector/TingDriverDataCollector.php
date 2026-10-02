@@ -84,7 +84,7 @@ class TingDriverDataCollector extends DataCollector implements LateDataCollector
      *
      * @api
      */
-    public function getName()
+    public function getName(): string
     {
         return 'ting.driver';
     }

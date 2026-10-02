@@ -82,7 +82,7 @@ class TingCacheDataCollector extends DataCollector implements LateDataCollectorI
      *
      * @api
      */
-    public function getName()
+    public function getName(): string
     {
         return 'ting.cache';
     }

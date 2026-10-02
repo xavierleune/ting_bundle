@@ -21,7 +21,7 @@ class MetadataClearer implements CacheClearerInterface
         $this->fileSystem = $filesystem ?: new Filesystem();
     }
 
-    public function clear($cacheDir)
+    public function clear(string $cacheDir): void
     {
         $this->fileSystem->remove($cacheDir . '/' . $this->cacheFile);
     }
