@@ -1,12 +1,13 @@
-> **⚠️ This repository is no longer actively maintained.**
-> The project is now maintained on the internal GitLab of CCM Benchmark, and new versions (4.0.0 and later) are published there only.
-> Pull requests are still welcome here: interesting ones will be ported.
+> **ℹ️ This is a maintained fork of [ccmbenchmark/ting_bundle](https://github.com/ccmbenchmark/ting_bundle).**
+> The upstream project is no longer maintained. This fork keeps the full history and tags of the original repository,
+> and is published as `xavierleune/ting_bundle`. PHP namespaces (`CCMBenchmark\TingBundle`) are unchanged, so switching
+> only requires replacing the package name in your `composer.json`.
 
 Installation
 ============
 
 1. Require Ting Bundle with
-    ```composer require ccmbenchmark/ting_bundle```
+    ```composer require xavierleune/ting_bundle```
 2. Load Bundles in AppKernel.php
 
 ```php
