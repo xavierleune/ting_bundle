@@ -1,4 +1,4 @@
-3.12.0 (unreleased):
+3.12.0 (2026-10-02):
     * Package renamed to xavierleune/ting_bundle (replaces ccmbenchmark/ting_bundle)
     * Require PHP >= 8.2 and Symfony ^7.0, drop support for Symfony 4.4, 5 and 6
     * Services are now declared in PHP instead of XML (XML configuration is deprecated since Symfony 7.4)
