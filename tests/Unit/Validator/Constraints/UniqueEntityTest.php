@@ -29,7 +29,7 @@ use CCMBenchmark\TingBundle\Tests\Support\TestCase;
 use CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Exception\InvalidOptionsException;
+use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 class UniqueEntityTest extends TestCase
@@ -75,38 +75,16 @@ class UniqueEntityTest extends TestCase
         $this->assertSame([Constraint::DEFAULT_GROUP], $uniqueEntity->groups);
     }
 
-    public function testConstructWithOptionsArrayIsDeprecated(): void
+    public function testConstructWithOptionsArrayShouldThrow(): void
     {
-        // trigger_deprecation() silences its error, so it is captured with a dedicated handler
-        $deprecations = [];
-        set_error_handler(function (int $type, string $message) use (&$deprecations) {
-            $deprecations[] = $message;
-            return true;
-        }, E_USER_DEPRECATED);
-        try {
-            $uniqueEntity = new UniqueEntity(
-                ['fields' => ['email'], 'repository' => 'App\Repository\UserRepository', 'message' => 'Already used'],
-                groups: ['create']
-            );
-        } finally {
-            restore_error_handler();
-        }
+        $message = 'Passing an array of options to configure the "CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity" constraint is no longer supported since ting_bundle 4.0, use named arguments instead.';
 
-        $this->assertSame(
-            ['Since xavierleune/ting_bundle 3.12: Passing an array of options to configure the "CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity" constraint is deprecated, use named arguments instead.'],
-            $deprecations
-        );
-        $this->assertSame(['email'], $uniqueEntity->fields);
-        $this->assertSame('App\Repository\UserRepository', $uniqueEntity->repository);
-        $this->assertSame('Already used', $uniqueEntity->message);
-        $this->assertSame(['create'], $uniqueEntity->groups);
-    }
-
-    public function testConstructWithUnknownOptionShouldThrow(): void
-    {
-        $this->assertThrows(InvalidOptionsException::class, function () {
-            @new UniqueEntity(['fields' => ['email'], 'repository' => 'R', 'unknown' => true]);
-        });
+        $this->assertThrows(ConstraintDefinitionException::class, function () {
+            new UniqueEntity(['fields' => ['email'], 'repository' => 'App\Repository\UserRepository']);
+        }, $message);
+        $this->assertThrows(ConstraintDefinitionException::class, function () {
+            new UniqueEntity(options: ['fields' => ['email'], 'repository' => 'App\Repository\UserRepository'], groups: ['create']);
+        }, $message);
     }
 
     public function testConstructWithoutRequiredOptionsShouldThrow(): void

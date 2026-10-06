@@ -1,6 +1,6 @@
 {
     "name": "xavierleune/ting_bundle",
-    "description" : "Symfony bundle for ccmbenchmark/ting. Provides an interface to use a lightweight datamapper in symfony.",
+    "description" : "Symfony bundle for xavierleune/ting. Provides an interface to use a lightweight datamapper in symfony.",
     "type": "symfony-bundle",
     "license": "Apache-2.0",
     "replace": {
@@ -8,23 +8,23 @@
     },
     "require": {
         "php": ">=8.2",
-        "ccmbenchmark/ting": "^3.13",
-        "doctrine/cache": "^1.10",
-        "symfony/validator": "^7.0",
-        "symfony/http-kernel": "^7.0",
-        "symfony/dependency-injection": "^7.0",
-        "symfony/config": "^7.0",
-        "symfony/stopwatch": "^7.0",
-        "symfony/service-contracts": "^2.5 || ^3.0",
-        "symfony/deprecation-contracts": "^2.5 || ^3.0"
+        "xavierleune/ting": "dev-main",
+        "symfony/validator": "^7.4 || ^8.0",
+        "symfony/http-kernel": "^7.4 || ^8.0",
+        "symfony/dependency-injection": "^7.4 || ^8.0",
+        "symfony/config": "^7.4 || ^8.0",
+        "symfony/stopwatch": "^7.4 || ^8.0",
+        "symfony/cache": "^7.4 || ^8.0",
+        "symfony/property-access": "^7.4 || ^8.0",
+        "symfony/service-contracts": "^2.5 || ^3.0"
     },
     "require-dev": {
         "brick/geo": "0.13.*",
-        "symfony/expression-language": "^7.2",
-        "symfony/serializer": "^7.0",
-        "symfony/security-bundle": "^7.0",
-        "symfony/security-core": "^7.0",
-        "symfony/uid": "^7.0",
+        "symfony/expression-language": "^7.4 || ^8.0",
+        "symfony/serializer": "^7.4 || ^8.0",
+        "symfony/security-bundle": "^7.4 || ^8.0",
+        "symfony/security-core": "^7.4 || ^8.0",
+        "symfony/uid": "^7.4 || ^8.0",
         "phpunit/phpunit": "^11.5 || ^12.0"
     },
     "autoload": {

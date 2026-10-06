@@ -27,7 +27,7 @@ namespace CCMBenchmark\TingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Attribute\HasNamedArguments;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Exception\InvalidOptionsException;
+use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 /**
@@ -51,7 +51,7 @@ class UniqueEntity extends Constraint
     public array|string $identityFields = [];
 
     /**
-     * @param array<string, mixed>|null $options        deprecated, use named arguments instead
+     * @param null                      $options        no longer supported since 4.0, throws when set
      * @param string|string[]|null      $fields         fields that must be unique together
      * @param string|null               $repository     repository class used to look for an existing entity
      * @param string|string[]|null      $identityFields fields identifying the validated entity itself (ignored when equal)
@@ -68,19 +68,7 @@ class UniqueEntity extends Constraint
         mixed $payload = null,
     ) {
         if ($options !== null) {
-            trigger_deprecation('xavierleune/ting_bundle', '3.12', 'Passing an array of options to configure the "%s" constraint is deprecated, use named arguments instead.', static::class);
-
-            $unknownOptions = array_diff(array_keys($options), ['fields', 'repository', 'identityFields', 'message', 'groups', 'payload']);
-            if ($unknownOptions !== []) {
-                throw new InvalidOptionsException(sprintf('The options "%s" do not exist in constraint "%s".', implode('", "', $unknownOptions), static::class), $unknownOptions);
-            }
-
-            $fields ??= $options['fields'] ?? null;
-            $repository ??= $options['repository'] ?? null;
-            $identityFields ??= $options['identityFields'] ?? null;
-            $message ??= $options['message'] ?? null;
-            $groups ??= $options['groups'] ?? null;
-            $payload ??= $options['payload'] ?? null;
+            throw new ConstraintDefinitionException(sprintf('Passing an array of options to configure the "%s" constraint is no longer supported since ting_bundle 4.0, use named arguments instead.', static::class));
         }
 
         $missingOptions = array_keys(array_filter(['fields' => $fields, 'repository' => $repository], fn ($value) => $value === null));

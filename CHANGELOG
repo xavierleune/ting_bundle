@@ -1,3 +1,12 @@
+4.0.0 (unreleased):
+    * Require xavierleune/ting ^4.0 (replaces ccmbenchmark/ting), see UPGRADE-4.0.md
+    * Support Symfony 8, require Symfony ^7.4 || ^8.0
+    * Connections: the "master" and "slaves" keys are renamed "primary" and "replicas"; the old keys throw an InvalidConfigurationException
+    * Cache: doctrine/cache is replaced by Symfony cache pools; cache_provider is the id of a Symfony cache pool (NullAdapter by default), the Doctrine\Common\Cache\Cache alias is replaced by CCMBenchmark\Ting\Cache\CacheInterface
+    * UniqueEntity: passing an array of options throws a ConstraintDefinitionException, use named arguments
+    * DriverLogger, CacheLogger, SymfonySerializer and SerializerFactory declare the native types of the Ting 4.0 interfaces
+    * Tests migrated from atoum to PHPUnit
+
 3.12.0 (2026-10-02):
     * Package renamed to xavierleune/ting_bundle (replaces ccmbenchmark/ting_bundle)
     * Require PHP >= 8.2 and Symfony ^7.0, drop support for Symfony 4.4, 5 and 6

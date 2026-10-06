@@ -5,6 +5,7 @@
  * ==========================================
  *
  * Copyright (C) 2014 CCM Benchmark Group. (http://www.ccmbenchmark.com)
+ * Copyright (C) 2026 Xavier Leune
  *
  ***********************************************************************
  *
@@ -27,9 +28,11 @@ namespace CCMBenchmark\TingBundle\DependencyInjection;
 use CCMBenchmark\TingBundle\TingBundle;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class Configuration implements ConfigurationInterface
 {
+    private const RENAMED_CONNECTION_KEYS = ['master' => 'primary', 'slaves' => 'replicas'];
 
     public function getConfigTreeBuilder(): TreeBuilder
     {
@@ -71,13 +74,35 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->arrayNode('connections')
+                    ->beforeNormalization()
+                        ->ifArray()
+                        ->then(static function (array $connections): array {
+                            foreach ($connections as $name => $connection) {
+                                foreach (self::RENAMED_CONNECTION_KEYS as $oldKey => $newKey) {
+                                    if (\is_array($connection) && \array_key_exists($oldKey, $connection)) {
+                                        $exception = new InvalidConfigurationException(sprintf(
+                                            'Invalid configuration for path "ting.connections": connection "%s": the "%s" key was renamed "%s" in ting_bundle 4.0 (Ting 4.0).',
+                                            $name,
+                                            $oldKey,
+                                            $newKey
+                                        ));
+                                        $exception->setPath('ting.connections');
+
+                                        throw $exception;
+                                    }
+                                }
+                            }
+
+                            return $connections;
+                        })
+                    ->end()
                     ->prototype('array')
                         ->children()
                             ->scalarNode('namespace')
                                 ->isRequired()
                             ->end()
                             ->scalarNode('charset')->end()
-                            ->arrayNode('master')
+                            ->arrayNode('primary')
                                 ->children()
                                     ->scalarNode('host')
                                         ->isRequired()
@@ -93,7 +118,7 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                             ->end()
-                            ->arrayNode('slaves')
+                            ->arrayNode('replicas')
                                 ->prototype('array')
                                     ->children()
                                         ->scalarNode('host')

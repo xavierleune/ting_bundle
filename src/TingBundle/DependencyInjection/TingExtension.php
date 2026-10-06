@@ -30,11 +30,11 @@ use CCMBenchmark\TingBundle\ArgumentResolver\EntityValueResolver;
 use CCMBenchmark\TingBundle\Schema\Column;
 use CCMBenchmark\TingBundle\Schema\Table;
 use CCMBenchmark\TingBundle\Serializer\SymfonySerializer;
-use Doctrine\Common\Cache\VoidCache;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use CCMBenchmark\TingBundle\TingBundle;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\NullAdapter;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
@@ -69,17 +69,10 @@ class TingExtension extends Extension
             $metadataRepository->addMethodCall('addMetadata', [$attribute->repository, $newMetadata]);
         });
         
-        $definition = $container->getDefinition('ting.cache');
         if (isset($config['cache_provider']) === true) {
-            $definition->addMethodCall('setCache', [new Reference($config['cache_provider'])]);
+            $container->setAlias('ting.cache.pool', $config['cache_provider']);
         } else {
-            $void = new Definition(VoidCache::class);
-            $void
-                ->setAutoconfigured(false)
-                ->setAutoconfigured(false)
-            ;
-            $container->setDefinition('doctrine_cache.providers.ting_cache_void', $void);
-            $definition->addMethodCall('setCache', [new Reference('doctrine_cache.providers.ting_cache_void')]);
+            $container->register('ting.cache.pool', NullAdapter::class);
         }
 
         if ($config['configuration_resolver_service'] !== null) {

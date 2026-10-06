@@ -5,6 +5,7 @@
  * ==========================================
  *
  * Copyright (C) 2014 CCM Benchmark Group. (http://www.ccmbenchmark.com)
+ * Copyright (C) 2026 Xavier Leune
  *
  ***********************************************************************
  *
@@ -84,11 +85,11 @@ class DriverLogger implements DriverLoggerInterface, ResetInterface
     /**
      * Add an opened connection to the list
      *
-     * @param $name       string connection name
-     * @param $connection string spl_object_hash of the connection
-     * @param $connectionConfig array Connection parameters
+     * @param string $name             connection name
+     * @param string $connection       spl_object_hash of the connection
+     * @param array  $connectionConfig Connection parameters
      */
-    public function addConnection($name, $connection, array $connectionConfig)
+    public function addConnection(string $name, string $connection, array $connectionConfig): void
     {
         if (isset($this->connections[$name]) === false) {
             $this->connections[$name] = [];
@@ -102,13 +103,10 @@ class DriverLogger implements DriverLoggerInterface, ResetInterface
     /**
      * Logs a SQL Query
      *
-     * @param      $sql
-     * @param      $params
-     * @param      $connection string spl_object_hash of the connection
-     * @param      $database   string name of the database
-     * @return void
+     * @param string $connection spl_object_hash of the connection
+     * @param string $database   name of the database
      */
-    public function startQuery($sql, $params, $connection, $database)
+    public function startQuery(string $sql, array $params, string $connection, string $database): void
     {
         if ($this->stopwatch !== null) {
             $this->stopwatch->start('query', 'ting');
@@ -129,10 +127,9 @@ class DriverLogger implements DriverLoggerInterface, ResetInterface
     /**
      * Log the end of a query (for timing purposes mainly)
      *
-     * @param $event string event name (query, exec, prepare)
-     * @return void
+     * @param string $event event name (query, exec, prepare)
      */
-    public function stopQuery($event = 'query')
+    public function stopQuery(string $event = 'query'): void
     {
         if ($this->stopwatch !== null) {
             $event = $this->stopwatch->stop($event);
@@ -146,12 +143,11 @@ class DriverLogger implements DriverLoggerInterface, ResetInterface
     /**
      * Log the preparation of a statement
      *
-     * @param $sql string the query
-     * @param $connection string spl_object_hash of the connection
-     * @param $database string name of the database
-     * @return void
+     * @param string $sql        the query
+     * @param string $connection spl_object_hash of the connection
+     * @param string $database   name of the database
      */
-    public function startPrepare($sql, $connection, $database)
+    public function startPrepare(string $sql, string $connection, string $database): void
     {
         if ($this->stopwatch !== null) {
             $this->queries[++$this->queryIndex] = [
@@ -173,11 +169,9 @@ class DriverLogger implements DriverLoggerInterface, ResetInterface
     /**
      * Log the parameters applied to a statement when executed
      *
-     * @param $statement string statement name
-     * @param $params
-     * @return void
+     * @param string $statement statement name
      */
-    public function startStatementExecute($statement, $params)
+    public function startStatementExecute(string $statement, array $params = []): void
     {
         if ($this->stopwatch !== null) {
             if (isset($this->execs[$statement]) === false) {
@@ -198,10 +192,9 @@ class DriverLogger implements DriverLoggerInterface, ResetInterface
     /**
      * Log the end of the preparation (for timing purposes)
      *
-     * @param $statement string statement name
-     * @return void
+     * @param string $statement statement name
      */
-    public function stopPrepare($statement)
+    public function stopPrepare(string $statement): void
     {
         $this->queries[$this->queryIndex]['name'] = $statement;
         $this->stopQuery('prepare');
@@ -210,10 +203,9 @@ class DriverLogger implements DriverLoggerInterface, ResetInterface
     /**
      * Log the end of execution of a prepared statement
      *
-     * @param $statement string unique identifier for the statement
-     * @return void
+     * @param string $statement unique identifier for the statement
      */
-    public function stopStatementExecute($statement)
+    public function stopStatementExecute(string $statement): void
     {
         if ($this->stopwatch !== null) {
             $event = $this->stopwatch->stop('exec');

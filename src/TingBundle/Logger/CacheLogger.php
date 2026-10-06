@@ -5,6 +5,7 @@
  * ==========================================
  *
  * Copyright (C) 2014 CCM Benchmark Group. (http://www.ccmbenchmark.com)
+ * Copyright (C) 2026 Xavier Leune
  *
  ***********************************************************************
  *
@@ -57,11 +58,10 @@ class CacheLogger implements CacheLoggerInterface, ResetInterface
     /**
      * Log an operation
      *
-     * @param $operation string one of defined constant starting with OPERATION_
-     * @param $keys array|string impacted keys by the operation
-     * @return void
+     * @param string $operation one of defined constant starting with OPERATION_
+     * @param array|string $keys impacted keys by the operation
      */
-    public function startOperation($operation, $keys)
+    public function startOperation(string $operation, array|string $keys): void
     {
         if (is_array($keys) === false) {
             $keys = [$keys];
@@ -84,10 +84,9 @@ class CacheLogger implements CacheLoggerInterface, ResetInterface
     /**
      * Flag the previously operation as stopped. Useful for time logging.
      *
-     * @param $miss boolean tells if the last get was a miss if it was a read operation
-     * @return void
+     * @param bool $miss tells if the last get was a miss if it was a read operation
      */
-    public function stopOperation($miss = false)
+    public function stopOperation(bool $miss = false): void
     {
         if ($this->stopwatch !== null) {
             if ($this->operations[$this->operationIndex]['type'] === CacheLoggerInterface::OPERATION_GET) {
