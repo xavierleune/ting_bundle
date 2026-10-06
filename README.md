@@ -175,8 +175,10 @@ Attributes are provided to declare an entity. Relevant attributes are available 
 
 #### Change tracking: `mutable`
 Ting writes a field when its setter notifies the change (`propertyChanged()`). A value that can be modified in place
-(`$city->updatedAt->modify('+1 day')`, `$city->address->street = '...'`) calls no setter: Ting 4 handles such a
-*mutable* field by writing it on every save of the entity.
+(`$city->updatedAt->modify('+1 day')`, `$city->address->street = '...'`) calls no setter: for such a *mutable* field,
+Ting 4 keeps its database value when the entity is read, and on save writes the field when its value differs, or when
+its setter notified a change. A save without change sends no `UPDATE`. An *immutable* field is only written when
+notified: a value modified in place on a field marked immutable is not saved.
 
 - Ting decides from the serializer: `\DateTime`, and objects of a custom serializer (including `symfony_serializer`), are
   mutable; scalars, arrays, `\DateTimeImmutable`, backed enums... are not.
@@ -184,8 +186,10 @@ Ting writes a field when its setter notifies the change (`propertyChanged()`). A
   enum, a `\DateTimeImmutable` or a `readonly` class.
 - `#[Column(mutable: true|false)]` overrides both.
 
-Prefer `\DateTimeImmutable` dates and `readonly` value objects: their changes always go through a setter, and saving
-an entity only writes what changed.
+Prefer `\DateTimeImmutable` dates and `readonly` value objects: their changes always go through a setter, and Ting
+does not have to keep and compare their database value (one more serialization per mutable field when an entity is
+read). See [Tracking changes](https://github.com/xavierleune/ting/blob/main/docs/entities.md#tracking-changes) in
+Ting's documentation for the details.
 
 ### Full example
 

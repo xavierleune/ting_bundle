@@ -28,7 +28,8 @@ namespace CCMBenchmark\TingBundle\Schema;
 /**
  * Maps a property to a column. All arguments are read by name.
  *
- * $mutable: whether the value can be modified in place (written on every save, see Ting's change tracking).
+ * $mutable: whether the value can be modified in place (Ting then compares its database value on save, see Ting's
+ * change tracking).
  * By default, Ting decides from the serializer, and the bundle marks as immutable the scalars, arrays, enums,
  * \DateTimeImmutable and readonly classes handled by a custom serializer.
  */
