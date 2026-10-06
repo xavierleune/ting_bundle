@@ -45,6 +45,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use tests\fixtures\SimpleRepository;
+use tests\fixtures\User;
+use tests\fixtures\UserHydrationMetadata;
 
 // Partial mocks are used to run the real code of the methods they do not replace, not to verify calls
 #[AllowMockObjectsWithoutExpectations]
@@ -230,6 +232,21 @@ class EntityValueResolverTest extends TestCase
 
         $this->assertCount(1, $result);
         $this->assertContains($object, $result);
+    }
+
+    public function testReturnsEmptyArrayWhenMetadataHaveNoRepository(): void
+    {
+        $argument = $this->createArgumentMetadataForAttributes(new MapEntity(class: User::class, id: 'id'));
+        $request = new Request(attributes: ['id' => 42]);
+
+        // Metadata used for hydration only: there is no repository to read the entity
+        $metadata = UserHydrationMetadata::initMetadata(new SerializerFactory());
+        $this->metadataRepository->method('findMetadataForEntity')->willReturnCallback(
+            fn($class, $success) => $success($metadata)
+        );
+        $this->repositoryFactory->expects($this->never())->method('get');
+
+        $this->assertSame([], $this->resolver->resolve($request, $argument));
     }
 
     private function createArgumentMetadataForAttributes(MapEntity $attribute, string $argumentName = 'argumentName'): ArgumentMetadata
