@@ -26,7 +26,6 @@
 namespace CCMBenchmark\TingBundle\Tests\Unit\Security;
 
 use CCMBenchmark\Ting\MetadataRepository;
-use CCMBenchmark\Ting\Repository\Metadata;
 use CCMBenchmark\Ting\Serializer\SerializerFactory;
 use CCMBenchmark\TingBundle\Repository\RepositoryFactory;
 use CCMBenchmark\TingBundle\Security\EntityUserProvider;
@@ -34,6 +33,7 @@ use CCMBenchmark\TingBundle\Tests\Support\TestCase;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use tests\fixtures\SimpleRepository;
 use tests\fixtures\User;
+use tests\fixtures\UserHydrationMetadata;
 
 class EntityUserProviderTest extends TestCase
 {
@@ -76,16 +76,43 @@ class EntityUserProviderTest extends TestCase
         $this->assertSame($refreshedUser, $provider->refreshUser(new User(42, 'old@example.com')));
     }
 
-    private function createProvider(SimpleRepository $repository, ?string $property): EntityUserProvider
+    public function testRepositoryIsTheClassTheMetadataAreRegisteredUnder(): void
     {
-        $metadata = new Metadata(new SerializerFactory());
-        $metadata->setEntity(User::class);
-        $metadata->setRepository(SimpleRepository::class);
-        $metadata->setConnectionName('main');
-        $metadata->setDatabase('app');
-        $metadata->setTable('usr_user');
-        $metadata->addField(['fieldName' => 'id', 'columnName' => 'usr_id', 'type' => 'int', 'primary' => true]);
-        $metadata->addField(['fieldName' => 'email', 'columnName' => 'usr_email', 'type' => 'string']);
+        $user = new User(42, 'jane@example.com');
+        $repository = $this->createStub(SimpleRepository::class);
+        $repository->method('getOneBy')->willReturn($user);
+
+        // As batchLoadMetadata() does: the metadata don't name their repository
+        $provider = $this->createProvider($repository, 'email', setRepository: false);
+
+        $this->assertSame($user, $provider->loadUserByIdentifier('jane@example.com'));
+    }
+
+    public function testMetadataWithoutRepositoryCannotProvideUsers(): void
+    {
+        $metadataRepository = new MetadataRepository(new SerializerFactory());
+        $metadataRepository->addMetadata(
+            UserHydrationMetadata::class,
+            UserHydrationMetadata::initMetadata(new SerializerFactory())
+        );
+        $repositoryFactory = $this->createMock(RepositoryFactory::class);
+        $repositoryFactory->expects($this->never())->method('get');
+
+        $provider = new EntityUserProvider($metadataRepository, $repositoryFactory, User::class, 'email');
+
+        $this->assertThrows(
+            \InvalidArgumentException::class,
+            fn () => $provider->loadUserByIdentifier('jane@example.com'),
+            'The metadata of "tests\fixtures\User" have no repository: register them with a Ting repository to load users.'
+        );
+    }
+
+    private function createProvider(SimpleRepository $repository, ?string $property, bool $setRepository = true): EntityUserProvider
+    {
+        $metadata = UserHydrationMetadata::initMetadata(new SerializerFactory());
+        if ($setRepository) {
+            $metadata->setRepository(SimpleRepository::class);
+        }
         $metadataRepository = new MetadataRepository(new SerializerFactory());
         $metadataRepository->addMetadata(SimpleRepository::class, $metadata);
 

@@ -5,6 +5,7 @@
  * ==========================================
  *
  * Copyright (C) 2025 CCM Benchmark Group. (http://www.ccmbenchmark.com)
+ * Copyright (C) 2026 Xavier Leune
  *
  ***********************************************************************
  *
@@ -67,7 +68,11 @@ final class EntityValueResolver implements ValueResolverInterface
         $repository = null;
 
         $this->metadataRepository->findMetadataForEntity($options->class, function (Metadata $metadata) use (&$repository) {
-            $repository = $this->repositoryFactory->get($metadata->getRepository());
+            // Metadata used for hydration only have no repository to read the entity
+            $repositoryClass = $metadata->getRepository();
+            if ($repositoryClass !== null) {
+                $repository = $this->repositoryFactory->get($repositoryClass);
+            }
         }, fn () => null);
         if ($repository === null) {
             return [];

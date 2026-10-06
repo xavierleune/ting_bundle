@@ -10,6 +10,7 @@
     * Fix: a property typed array is decoded as an associative array (json "assoc" option): a JSON object became a stdClass, which an array property cannot hold
     * Fix: UniqueEntity violation message with enum, date or object values (they could not be cast to string)
     * Repositories declared as services are reset between requests (kernel.reset, worker mode)
+    * Fix: EntityValueResolver and EntityUserProvider with metadata loaded from repositories (batchLoadMetadata) or used for hydration only (TypeError on RepositoryFactory::get(null))
 
 3.12.0 (2026-10-02):
     * Package renamed to xavierleune/ting_bundle (replaces ccmbenchmark/ting_bundle)

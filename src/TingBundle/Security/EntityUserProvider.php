@@ -140,7 +140,12 @@ class EntityUserProvider implements UserProviderInterface, PasswordUpgraderInter
 
     private function getRepository(): Repository
     {
-        return $this->repositoryFactory->get($this->getMetadata()->getRepository());
+        $repositoryClass = $this->getMetadata()->getRepository();
+        if ($repositoryClass === null) {
+            throw new \InvalidArgumentException(\sprintf('The metadata of "%s" have no repository: register them with a Ting repository to load users.', $this->class));
+        }
+
+        return $this->repositoryFactory->get($repositoryClass);
     }
     
     private function getIdentifierValues(UserInterface $user): ?array
