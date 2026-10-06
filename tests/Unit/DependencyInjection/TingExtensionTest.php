@@ -32,6 +32,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use tests\fixtures\EntityWithAttributes;
+use tests\fixtures\EntityWithValueObjects;
 
 class TingExtensionTest extends TestCase
 {
@@ -78,5 +79,47 @@ class TingExtensionTest extends TestCase
             ],
             $calls[0][1][1]->getMethodCalls()
         );
+    }
+
+    public function testMutabilityIsDeducedFromThePropertyType(): void
+    {
+        $fields = $this->getFieldsOfEntity(EntityWithValueObjects::class);
+
+        // Enums and readonly classes can't change in place: they don't need to be written on every save
+        $this->assertFalse($fields['status']['mutable']);
+        $this->assertFalse($fields['price']['mutable']);
+        // Ting decides for the other fields (mutable by default for an object of a custom serializer)
+        $this->assertArrayNotHasKey('mutable', $fields['address']);
+        $this->assertArrayNotHasKey('mutable', $fields['id']);
+        // A scalar handled by a custom serializer is immutable too
+        $this->assertFalse($fields['ip']['mutable']);
+        // The attribute wins
+        $this->assertFalse($fields['checkedAt']['mutable']);
+    }
+
+    /**
+     * @param class-string $entity
+     * @return array<string, array<string, mixed>> fields given to Metadata::addField(), by property name
+     */
+    private function getFieldsOfEntity(string $entity): array
+    {
+        $containerBuilder = new ContainerBuilder(new ParameterBag([
+            'kernel.debug' => false,
+            'kernel.cache_dir' => sys_get_temp_dir()
+        ]));
+        $containerBuilder->register('entity', $entity)->setAutoconfigured(true)->setPublic(true);
+        $containerBuilder->register('file_locator', FileLocatorInterface::class);
+
+        (new TingExtension())->load([], $containerBuilder);
+        $containerBuilder->compile();
+
+        $fields = [];
+        foreach ($containerBuilder->getDefinition('ting.metadatarepository')->getMethodCalls()[0][1][1]->getMethodCalls() as [$method, $arguments]) {
+            if ($method === 'addField') {
+                $fields[$arguments[0]['fieldName']] = $arguments[0];
+            }
+        }
+
+        return $fields;
     }
 }
