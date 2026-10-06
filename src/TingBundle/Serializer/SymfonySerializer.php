@@ -30,13 +30,13 @@ class SymfonySerializer implements SerializerInterface
 {
     public function __construct(private readonly ?\Symfony\Component\Serializer\SerializerInterface $serializer = null) {}
 
-    public function serialize($toSerialize, array $options = [])
+    public function serialize(mixed $toSerialize, array $options = []): mixed
     {
         $this->throwOnNullSerializer();
         return $this->serializer->serialize($toSerialize, 'json', $options['context'] ?? []);
     }
 
-    public function unserialize($serialized, array $options = [])
+    public function unserialize(mixed $serialized, array $options = []): mixed
     {
         if ($serialized === null) {
             return null;
@@ -48,7 +48,7 @@ class SymfonySerializer implements SerializerInterface
         return $this->serializer->deserialize($serialized, $options['type'], 'json', $options['context'] ?? []);
     }
 
-    private function throwOnNullSerializer()
+    private function throwOnNullSerializer(): void
     {
         if ($this->serializer === null) {
             throw new \RuntimeException('SymfonySerializer requires symfony/serializer to be installed. Use composer require symfony/serializer to add it.');

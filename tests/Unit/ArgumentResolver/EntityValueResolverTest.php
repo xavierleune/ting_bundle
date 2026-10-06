@@ -141,8 +141,11 @@ class EntityValueResolverTest extends TestCase
         $argument = $this->createArgumentMetadataForAttributes($mapEntity);
         $request = new Request(attributes: ['id' => 123]);
 
+        // Ting 4.0 types RepositoryFactory::get(string): the metadata needs a repository
+        $metadata = new Metadata(new SerializerFactory());
+        $metadata->setRepository('RepositoryClass');
         $this->metadataRepository->method('findMetadataForEntity')->willReturnCallback(
-            fn($class, $success) => $success(new Metadata(new SerializerFactory()))
+            fn($class, $success) => $success($metadata)
         );
         $this->repositoryFactory->method('get')->willReturn($simpleRepository);
 

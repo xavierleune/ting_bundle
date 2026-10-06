@@ -31,12 +31,12 @@ class SerializerFactory implements SerializerFactoryInterface
 {
     private array $serializers = [];
 
-    public function add(SerializerInterface $serializer)
+    public function add(SerializerInterface $serializer): void
     {
         $this->serializers[get_class($serializer)] = $serializer;
     }
 
-    public function get($serializerName)
+    public function get(string $serializerName): SerializerInterface
     {
         if (!isset($this->serializers[$serializerName])) {
             // Support old definition, try to magically instanciate.

@@ -79,14 +79,4 @@ class TingExtensionTest extends TestCase
             $calls[0][1][1]->getMethodCalls()
         );
     }
-
-    public function testContainerShouldDeclareValueResolverIfAvailable(): void
-    {
-        $containerBuilder = new ContainerBuilder(new ParameterBag(['kernel.debug' => false]));
-        (new TingExtension())->load([], $containerBuilder);
-
-        // The atoum test computed the expectation from interface_exists()/class_exists() on unimported
-        // (thus non-existent) classes: it always expected false, on a service id that is never declared
-        $this->assertFalse($containerBuilder->hasDefinition('ting.argumentvalueresolver'));
-    }
 }

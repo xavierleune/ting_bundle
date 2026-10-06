@@ -26,6 +26,7 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use CCMBenchmark\Ting\Cache\Cache;
+use CCMBenchmark\Ting\Cache\CacheInterface;
 use CCMBenchmark\Ting\ConnectionPool;
 use CCMBenchmark\Ting\MetadataRepository;
 use CCMBenchmark\Ting\Query\QueryFactory;
@@ -43,7 +44,6 @@ use CCMBenchmark\TingBundle\Security\EntityUserProvider;
 use CCMBenchmark\TingBundle\Serializer\SerializerFactory;
 use CCMBenchmark\TingBundle\Serializer\SymfonySerializer;
 use CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntityValidator;
-use Doctrine\Common\Cache\Cache as DoctrineCache;
 use Symfony\Component\Serializer\SerializerInterface as SymfonySerializerInterface;
 
 return static function (ContainerConfigurator $container): void {
@@ -63,7 +63,6 @@ return static function (ContainerConfigurator $container): void {
             service('ting.collectionfactory'),
             service('ting.unitofwork'),
             service('ting.cache'),
-            service('ting.serializerfactory'),
         ])
         ->call('loadMetadata', [
             param('kernel.cache_dir'),
@@ -132,9 +131,11 @@ return static function (ContainerConfigurator $container): void {
         ]);
     $services->alias(CollectionFactory::class, 'ting.collectionfactory');
 
+    // ting.cache.pool (a Symfony cache pool) is defined by TingExtension from the cache_provider option
     $services->set('ting.cache', Cache::class)
-        ->public();
-    $services->alias(DoctrineCache::class, 'ting.cache');
+        ->public()
+        ->call('setCache', [service('ting.cache.pool')]);
+    $services->alias(CacheInterface::class, 'ting.cache');
 
     $services->set('ting.driver_data_collector', TingDriverDataCollector::class)
         ->public()

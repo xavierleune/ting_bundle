@@ -6,7 +6,8 @@
 Installation
 ============
 
-Requires PHP 8.2+ and Symfony 7.
+Requires PHP 8.2+, Symfony 7.4 or 8 (Symfony 8 requires PHP 8.4) and [Ting 4](https://github.com/xavierleune/ting).
+Upgrading from 3.x: see [UPGRADE-4.0.md](UPGRADE-4.0.md).
 
 1. Require Ting Bundle with
     ```composer require xavierleune/ting_bundle```
@@ -54,18 +55,18 @@ Configuration
         connections:
             main:
                 namespace: CCMBenchmark\Ting\Driver\Mysqli
-                master:
+                primary:
                     host:     localhost
                     user:     world_sample
                     password: world_sample
                     port:     3306
-                slaves:
-                    slave1:
+                replicas:
+                    replica1:
                         host:     127.0.0.1
                         user:     world_sample_ro
                         password: world_sample_ro
                         port:     3306
-                    slave2:
+                    replica2:
                         host:     127.0.1.1
                         user:     world_sample_ro
                         password: world_sample_ro
@@ -74,6 +75,19 @@ Configuration
         databases_options:
             baz:
                 timezone: 'Europe/Paris'
+
+        # Optional: id of a Symfony cache pool, used by cached queries (a NullAdapter by default)
+        cache_provider: cache.ting
+```
+
+The cache pool is any Symfony cache pool, for instance:
+
+```yaml
+framework:
+    cache:
+        pools:
+            cache.ting:
+                adapter: cache.adapter.redis
 ```
 
 ## About public properties

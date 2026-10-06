@@ -30,7 +30,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class TingBundle extends Bundle
 {
-    public const VERSION = '3.12.0';
+    public const VERSION = '4.0.0';
 
     public function build(ContainerBuilder $container): void
     {
