@@ -25,7 +25,9 @@
 
 namespace CCMBenchmark\TingBundle\Tests\Unit\DependencyInjection;
 
+use CCMBenchmark\Ting\Serializer\BackedEnum;
 use CCMBenchmark\TingBundle\DependencyInjection\TingExtension;
+use CCMBenchmark\TingBundle\Serializer\SymfonySerializer;
 use CCMBenchmark\TingBundle\Tests\Support\TestCase;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -33,6 +35,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use tests\fixtures\EntityWithAttributes;
 use tests\fixtures\EntityWithValueObjects;
+use tests\fixtures\Status;
 
 class TingExtensionTest extends TestCase
 {
@@ -97,11 +100,34 @@ class TingExtensionTest extends TestCase
         $this->assertFalse($fields['checkedAt']['mutable']);
     }
 
+    public function testBackedEnumsUseTheBackedEnumSerializerByDefault(): void
+    {
+        $fields = $this->getFieldsOfEntity(EntityWithValueObjects::class);
+
+        $this->assertSame('string', $fields['status']['type']);
+        $this->assertSame(BackedEnum::class, $fields['status']['serializer']);
+        $this->assertSame(['unserialize' => ['enum' => Status::class]], $fields['status']['serializer_options']);
+        // A serializer given by the attribute keeps its own options
+        $this->assertSame(SymfonySerializer::class, $fields['customStatus']['serializer']);
+        $this->assertSame(Status::class, $fields['customStatus']['serializer_options']['unserialize']['type']);
+        $this->assertArrayNotHasKey('enum', $fields['customStatus']['serializer_options']['unserialize']);
+    }
+
+    public function testEnumsCanUseTheSymfonySerializer(): void
+    {
+        $fields = $this->getFieldsOfEntity(EntityWithValueObjects::class, ['enum_serializer' => 'symfony_serializer']);
+
+        $this->assertSame('symfony_serializer', $fields['status']['type']);
+        $this->assertSame(SymfonySerializer::class, $fields['status']['serializer']);
+        $this->assertSame(Status::class, $fields['status']['serializer_options']['unserialize']['type']);
+    }
+
     /**
      * @param class-string $entity
+     * @param array<string, mixed> $config
      * @return array<string, array<string, mixed>> fields given to Metadata::addField(), by property name
      */
-    private function getFieldsOfEntity(string $entity): array
+    private function getFieldsOfEntity(string $entity, array $config = []): array
     {
         $containerBuilder = new ContainerBuilder(new ParameterBag([
             'kernel.debug' => false,
@@ -110,7 +136,7 @@ class TingExtensionTest extends TestCase
         $containerBuilder->register('entity', $entity)->setAutoconfigured(true)->setPublic(true);
         $containerBuilder->register('file_locator', FileLocatorInterface::class);
 
-        (new TingExtension())->load([], $containerBuilder);
+        (new TingExtension())->load([$config], $containerBuilder);
         $containerBuilder->compile();
 
         $fields = [];

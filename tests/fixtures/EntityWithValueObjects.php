@@ -48,4 +48,7 @@ class EntityWithValueObjects
 
     #[Column(serializer: \CCMBenchmark\Ting\Serializer\Ip::class)]
     public string $ip;
+
+    #[Column(serializer: \CCMBenchmark\TingBundle\Serializer\SymfonySerializer::class, serializerOptions: ['unserialize' => ['type' => Status::class]])]
+    public Status $customStatus;
 }
