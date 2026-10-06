@@ -71,7 +71,7 @@ class TingExtensionTest extends TestCase
                 ['addField', [['fieldName' => 'dateImmutable', 'columnName' => 'date_immutable', 'type' => 'datetime_immutable', 'serializer_options' => ['format' => 'Y-m-d H:i:s']]]],
                 ['addField', [['fieldName' => 'dateMutable', 'columnName' => 'date_mutable', 'type' => 'datetime']]],
                 ['addField', [['fieldName' => 'timeZone', 'columnName' => 'time_zone', 'type' => 'datetimezone']]],
-                ['addField', [['fieldName' => 'json', 'columnName' => 'json', 'type' => 'json']]],
+                ['addField', [['fieldName' => 'json', 'columnName' => 'json', 'type' => 'json', 'serializer_options' => ['unserialize' => ['assoc' => true]]]]],
                 ['addField', [['fieldName' => 'point', 'columnName' => 'point', 'type' => 'geometry']]],
                 ['addField', [['fieldName' => 'genericUuid', 'columnName' => 'generic_uuid', 'type' => 'uuid']]],
                 ['addField', [['fieldName' => 'uuidV4', 'columnName' => 'uuid_v4', 'type' => 'uuid']]],

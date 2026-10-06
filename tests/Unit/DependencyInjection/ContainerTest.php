@@ -43,6 +43,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 use tests\fixtures\EntityWithAttributes;
+use tests\fixtures\SimpleRepository;
 
 /**
  * Builds the container as an application does, and instantiates every service of the bundle
@@ -160,6 +161,17 @@ class ContainerTest extends TestCase
 
         $this->assertInstanceOf(EntityValueResolver::class, $container->get(EntityValueResolver::class));
         $this->assertSame(EntityValueResolver::class, (string) $container->getAlias('ting.entity_value_resolver'));
+    }
+
+    public function testRepositoryServicesAreResetBetweenRequests(): void
+    {
+        $container = $this->buildContainer([], false, function (ContainerBuilder $container) {
+            $container->register('app.repository', SimpleRepository::class)
+                ->setAutoconfigured(true)
+                ->setPublic(true);
+        });
+
+        $this->assertSame([['method' => 'reset']], $container->getDefinition('app.repository')->getTag('kernel.reset'));
     }
 
     /**

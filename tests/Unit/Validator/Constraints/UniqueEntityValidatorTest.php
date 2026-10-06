@@ -40,6 +40,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use tests\fixtures\City;
+use tests\fixtures\Status;
 
 class UniqueEntityValidatorTest extends TestCase
 {
@@ -144,6 +145,38 @@ class UniqueEntityValidatorTest extends TestCase
         $city->setId(hexdec(uniqid()));
         $city->setName('Luxiol');
         $uniqueEntityValidator->validate($city, $uniqueEntity);
+    }
+
+    public function testViolationShowsEnumAndDateValues(): void
+    {
+        $constraintViolationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
+        $constraintViolationBuilder->expects($this->once())
+            ->method('setParameter')
+            ->with('{{ data }}', 'active, 2026-01-02 03:04:05')
+            ->willReturnSelf();
+        $executionContext = $this->createExecutionContext();
+
+        $uniqueEntity = new UniqueEntity(fields: ['status', 'createdAt'], repository: 'FakeRepository');
+        $executionContext->expects($this->once())
+            ->method('buildViolation')
+            ->with($uniqueEntity->message)
+            ->willReturn($constraintViolationBuilder);
+
+        $uniqueEntityValidator = new UniqueEntityValidator($this->createRepositoryFactory(fn ($params) => new \stdClass()));
+        $uniqueEntityValidator->initialize($executionContext);
+
+        $entity = new class () {
+            public function getStatus(): Status
+            {
+                return Status::Active;
+            }
+
+            public function getCreatedAt(): \DateTimeImmutable
+            {
+                return new \DateTimeImmutable('2026-01-02 03:04:05');
+            }
+        };
+        $uniqueEntityValidator->validate($entity, $uniqueEntity);
     }
 
     /**
