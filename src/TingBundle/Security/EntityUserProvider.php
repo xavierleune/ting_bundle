@@ -5,6 +5,7 @@
  * ==========================================
  *
  * Copyright (C) 2025 CCM Benchmark Group. (http://www.ccmbenchmark.com)
+ * Copyright (C) 2026 Xavier Leune
  *
  ***********************************************************************
  *
@@ -142,7 +143,7 @@ class EntityUserProvider implements UserProviderInterface, PasswordUpgraderInter
         return $this->repositoryFactory->get($this->getMetadata()->getRepository());
     }
     
-    private function getIdentifierValues($user): ?array
+    private function getIdentifierValues(UserInterface $user): ?array
     {
         $metadata = $this->getMetadata();
         $primaries = $metadata->getPrimaries();
@@ -150,8 +151,9 @@ class EntityUserProvider implements UserProviderInterface, PasswordUpgraderInter
             return null;
         }
         $identifierValues = [];
+        // Primaries are field definitions indexed by column name: Repository::get() takes property names
         foreach ($primaries as $primary) {
-            $identifierValues[$primary] = $metadata->getEntityPropertyByFieldName($user, $primary);
+            $identifierValues[$primary['fieldName']] = $metadata->getEntityPropertyByFieldName($user, $primary['fieldName']);
         }
         
         return $identifierValues;

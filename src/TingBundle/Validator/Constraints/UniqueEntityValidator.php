@@ -5,6 +5,7 @@
  * ==========================================
  *
  * Copyright (C) 2014 CCM Benchmark Group. (http://www.ccmbenchmark.com)
+ * Copyright (C) 2026 Xavier Leune
  *
  ***********************************************************************
  *
@@ -92,9 +93,24 @@ class UniqueEntityValidator extends ConstraintValidator
             }
             if ($validationFailed === true) {
                 $this->context->buildViolation($constraint->message)
-                    ->setParameter('{{ data }}', implode(', ', $criteria))
+                    ->setParameter('{{ data }}', implode(', ', array_map($this->formatCriterion(...), $criteria)))
                     ->addViolation();
             }
         }
+    }
+
+    /**
+     * Criteria hold the values of the entity: enums, dates and other objects can't be cast to string
+     */
+    private function formatCriterion(mixed $value): string
+    {
+        return match (true) {
+            $value instanceof \BackedEnum => (string) $value->value,
+            $value instanceof \UnitEnum => $value->name,
+            $value instanceof \DateTimeInterface => $value->format('Y-m-d H:i:s'),
+            $value === null => 'null',
+            \is_scalar($value), $value instanceof \Stringable => (string) $value,
+            default => get_debug_type($value),
+        };
     }
 }

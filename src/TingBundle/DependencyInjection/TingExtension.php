@@ -26,6 +26,7 @@
 namespace CCMBenchmark\TingBundle\DependencyInjection;
 
 use CCMBenchmark\Ting\Repository\Metadata;
+use CCMBenchmark\Ting\Repository\Repository;
 use CCMBenchmark\TingBundle\ArgumentResolver\EntityValueResolver;
 use CCMBenchmark\TingBundle\Schema\Column;
 use CCMBenchmark\TingBundle\Schema\Table;
@@ -64,6 +65,10 @@ class TingExtension extends Extension
         $container->setParameter('ting.database_options', $config['databases_options']);
         
         $metadataRepository = $container->getDefinition('ting.metadatarepository');
+        // Repositories declared as services keep a unit of work and a connection: reset them between requests
+        $container->registerForAutoconfiguration(Repository::class)
+            ->addTag('kernel.reset', ['method' => 'reset']);
+
         $container->registerAttributeForAutoconfiguration(Table::class, function(ChildDefinition $definition, Table $attribute, \ReflectionClass $reflector) use ($metadataRepository): void {
             $newMetadata = $this->getMetadata($reflector, $attribute);
             $metadataRepository->addMethodCall('addMetadata', [$attribute->repository, $newMetadata]);
@@ -203,6 +208,10 @@ class TingExtension extends Extension
                 };
             }
             $options = $mappingAttribute->getArguments()['serializerOptions'] ?? [];
+            if ($newField['type'] === 'json' && $property->getType()->getName() === 'array') {
+                // Without assoc, a JSON object is decoded to a stdClass, which an array property cannot hold
+                $options = array_replace_recursive(['unserialize' => ['assoc' => true]], $options);
+            }
             if ($newField['type'] === 'symfony_serializer') {
                 $defaultOptions = [
                     'serialize' => ['context' => ['groups' => ['*']]],
