@@ -228,8 +228,30 @@ class TingExtension extends Extension
                 $newField['serializer_options'] = $options;
             }
 
+            if (array_key_exists('mutable', $mappingAttribute->getArguments())) {
+                $newField['mutable'] = (bool) $mappingAttribute->getArguments()['mutable'];
+            } elseif (isset($newField['serializer']) && $this->isImmutableType($property->getType()->getName())) {
+                // Ting considers the values of a custom serializer mutable: the type of the property tells better
+                $newField['mutable'] = false;
+            }
+
             $newMetadata->addMethodCall('addField', [$newField]);
         }
         return $newMetadata;
+    }
+
+    /**
+     * Whether a value of this type can't be modified in place, so that its changes are always notified by a setter
+     */
+    private function isImmutableType(string $type): bool
+    {
+        if (\in_array($type, ['string', 'int', 'float', 'bool', 'array'], true) || $type === \DateTimeImmutable::class) {
+            return true;
+        }
+        if (enum_exists($type)) {
+            return true;
+        }
+
+        return class_exists($type) && (new \ReflectionClass($type))->isReadOnly();
     }
 }

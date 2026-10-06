@@ -6,6 +6,7 @@
     * UniqueEntity: passing an array of options throws a ConstraintDefinitionException, use named arguments
     * DriverLogger, CacheLogger, SymfonySerializer and SerializerFactory declare the native types of the Ting 4.0 interfaces
     * Tests migrated from atoum to PHPUnit
+    * #[Column(mutable: ...)] option; the values of a custom serializer (symfony_serializer included) are immutable when the property type is a scalar, an array, an enum, a DateTimeImmutable or a readonly class
     * Fix: EntityUserProvider::refreshUser() reloads the user by its primary key properties (TypeError: it iterated the field definitions as names)
     * Fix: a property typed array is decoded as an associative array (json "assoc" option): a JSON object became a stdClass, which an array property cannot hold
     * Fix: UniqueEntity violation message with enum, date or object values (they could not be cast to string)

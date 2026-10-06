@@ -43,6 +43,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 use tests\fixtures\EntityWithAttributes;
+use tests\fixtures\EntityWithValueObjects;
 use tests\fixtures\SimpleRepository;
 
 /**
@@ -73,6 +74,8 @@ class ContainerTest extends TestCase
             // Its #[Table] attribute adds a metadata to ting.metadatarepository
             $container->register('entity_with_attributes', EntityWithAttributes::class)
                 ->setAutoconfigured(true);
+            $container->register('entity_with_value_objects', EntityWithValueObjects::class)
+                ->setAutoconfigured(true);
         });
 
         $instantiated = 0;
@@ -84,14 +87,18 @@ class ContainerTest extends TestCase
             $instantiated++;
         }
         $this->assertGreaterThan(20, $instantiated);
-        $found = null;
-        $container->get('ting.metadatarepository')->findMetadataForEntity(
-            EntityWithAttributes::class,
-            function (Metadata $metadata) use (&$found): void {
-                $found = $metadata;
-            }
-        );
-        $this->assertInstanceOf(Metadata::class, $found);
+        foreach ([EntityWithAttributes::class, EntityWithValueObjects::class] as $entity) {
+            $found = null;
+            $container->get('ting.metadatarepository')->findMetadataForEntity(
+                $entity,
+                function (Metadata $metadata) use (&$found): void {
+                    $found = $metadata;
+                }
+            );
+            $this->assertInstanceOf(Metadata::class, $found, $entity);
+        }
+        $this->assertFalse($found->isMutable('status'));
+        $this->assertTrue($found->isMutable('address'));
     }
 
     public function testConnectionsArePassedToTheConnectionPool(): void

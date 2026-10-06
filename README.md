@@ -154,6 +154,31 @@ Attributes are provided to declare an entity. Relevant attributes are available 
 ### Column
 - Full name: `CCMBenchmark\TingBundle\Schema\Column`
 - This attribute must be added to every property mapped to the database. Serialization is inferred from the type, if available.
+- Arguments (by name): `column`, `primary`, `autoIncrement`, `serializer`, `serializerOptions`, `mutable`.
+
+| Property type                                   | Ting type / serializer                                   |
+|-------------------------------------------------|----------------------------------------------------------|
+| `string`, `int`, `float`, `bool`                | `string`, `int`, `double`, `bool`                        |
+| `array`                                         | `json`, decoded as an associative array                  |
+| `\DateTimeImmutable` / `\DateTime`              | `datetime_immutable` / `datetime` (`Y-m-d H:i:s`)        |
+| `\DateTimeZone`                                 | `datetimezone`                                           |
+| `Symfony\Component\Uid\Uuid` and subclasses     | `uuid`                                                   |
+| `Brick\Geo\Geometry` subclasses                 | `geometry`                                               |
+| any other class (enum, value object...)         | `symfony_serializer` (JSON), when symfony/serializer is installed |
+
+#### Change tracking: `mutable`
+Ting writes a field when its setter notifies the change (`propertyChanged()`). A value that can be modified in place
+(`$city->updatedAt->modify('+1 day')`, `$city->address->street = '...'`) calls no setter: Ting 4 handles such a
+*mutable* field by writing it on every save of the entity.
+
+- Ting decides from the serializer: `\DateTime`, and objects of a custom serializer (including `symfony_serializer`), are
+  mutable; scalars, arrays, `\DateTimeImmutable`, enums with Ting's serializer... are not.
+- The bundle also marks as immutable the values of a custom serializer whose property type is a scalar, an array, an
+  enum, a `\DateTimeImmutable` or a `readonly` class.
+- `#[Column(mutable: true|false)]` overrides both.
+
+Prefer `\DateTimeImmutable` dates and `readonly` value objects: their changes always go through a setter, and saving
+an entity only writes what changed.
 
 ### Full example
 
