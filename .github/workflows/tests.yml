@@ -42,5 +42,11 @@ jobs:
         with:
           dependency-versions: "${{ matrix.deps }}"
 
-      - name: Run Atoum tests
-        run: php vendor/bin/atoum
+      - name: Run PHPUnit tests
+        run: |
+          # PHPUnit notices (e.g. mocks without expectations) only exist since PHPUnit 12
+          if php vendor/bin/phpunit --version | grep -qE "PHPUnit (1[2-9]|[2-9][0-9])\."; then
+            php vendor/bin/phpunit --fail-on-phpunit-notice
+          else
+            php vendor/bin/phpunit
+          fi

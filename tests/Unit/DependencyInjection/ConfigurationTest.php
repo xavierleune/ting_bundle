@@ -5,6 +5,7 @@
  * ==========================================
  *
  * Copyright (C) 2020 CCM Benchmark Group. (http://www.ccmbenchmark.com)
+ * Copyright (C) 2026 Xavier Leune
  *
  ***********************************************************************
  *
@@ -22,15 +23,16 @@
  *
  **********************************************************************/
 
-namespace tests\units\CCMBenchmark\TingBundle\DependencyInjection;
+namespace CCMBenchmark\TingBundle\Tests\Unit\DependencyInjection;
 
-class Configuration extends \atoum
+use CCMBenchmark\TingBundle\DependencyInjection\Configuration;
+use CCMBenchmark\TingBundle\Tests\Support\TestCase;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+
+class ConfigurationTest extends TestCase
 {
-    public function testGetConfigTreeBuilderShouldReturnATreeBuilderInstance()
+    public function testGetConfigTreeBuilderShouldReturnATreeBuilderInstance(): void
     {
-        $this
-            ->object($this->newTestedInstance->getConfigTreeBuilder())
-                ->isInstanceOf(\Symfony\Component\Config\Definition\Builder\TreeBuilder::class)
-        ;
+        $this->assertInstanceOf(TreeBuilder::class, (new Configuration())->getConfigTreeBuilder());
     }
 }

@@ -19,14 +19,13 @@
         "symfony/deprecation-contracts": "^2.5 || ^3.0"
     },
     "require-dev": {
-        "atoum/atoum": "^4.4",
-        "atoum/stubs": "^2.2",
         "brick/geo": "0.13.*",
         "symfony/expression-language": "^7.2",
         "symfony/serializer": "^7.0",
         "symfony/security-bundle": "^7.0",
         "symfony/security-core": "^7.0",
-        "symfony/uid": "^7.0"
+        "symfony/uid": "^7.0",
+        "phpunit/phpunit": "^11.5 || ^12.0"
     },
     "autoload": {
         "psr-4" : {
@@ -35,8 +34,15 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "tests\\fixtures\\": "tests/fixtures/"
+            "tests\\fixtures\\": "tests/fixtures/",
+            "CCMBenchmark\\TingBundle\\Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "test": [
+            "@putenv XDEBUG_MODE=off",
+            "phpunit"
+        ]
     },
     "minimum-stability" : "stable"
 }
