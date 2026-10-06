@@ -80,6 +80,10 @@ Configuration
 
         # Optional: id of a Symfony cache pool, used by cached queries (a NullAdapter by default)
         cache_provider: cache.ting
+
+        # Optional: how properties typed with a backed enum are stored, see "Declare metadata with attributes"
+        # backed_enum (default): the value of the case; symfony_serializer: its JSON encoding, as ting_bundle < 4.0
+        enum_serializer: backed_enum
 ```
 
 The cache pool is any Symfony cache pool, for instance:
@@ -166,7 +170,8 @@ Attributes are provided to declare an entity. Relevant attributes are available 
 | `\DateTimeZone`                                 | `datetimezone`                                           |
 | `Symfony\Component\Uid\Uuid` and subclasses     | `uuid`                                                   |
 | `Brick\Geo\Geometry` subclasses                 | `geometry`                                               |
-| any other class (enum, value object...)         | `symfony_serializer` (JSON), when symfony/serializer is installed |
+| backed enum                                     | `string`, with Ting's `BackedEnum` serializer: the value of the case (see `enum_serializer`) |
+| any other class (pure enum, value object...)    | `symfony_serializer` (JSON), when symfony/serializer is installed |
 
 #### Change tracking: `mutable`
 Ting writes a field when its setter notifies the change (`propertyChanged()`). A value that can be modified in place
@@ -174,7 +179,7 @@ Ting writes a field when its setter notifies the change (`propertyChanged()`). A
 *mutable* field by writing it on every save of the entity.
 
 - Ting decides from the serializer: `\DateTime`, and objects of a custom serializer (including `symfony_serializer`), are
-  mutable; scalars, arrays, `\DateTimeImmutable`, enums with Ting's serializer... are not.
+  mutable; scalars, arrays, `\DateTimeImmutable`, backed enums... are not.
 - The bundle also marks as immutable the values of a custom serializer whose property type is a scalar, an array, an
   enum, a `\DateTimeImmutable` or a `readonly` class.
 - `#[Column(mutable: true|false)]` overrides both.

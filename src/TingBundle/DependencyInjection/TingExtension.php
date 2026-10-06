@@ -27,6 +27,7 @@ namespace CCMBenchmark\TingBundle\DependencyInjection;
 
 use CCMBenchmark\Ting\Repository\Metadata;
 use CCMBenchmark\Ting\Repository\Repository;
+use CCMBenchmark\Ting\Serializer\BackedEnum as BackedEnumSerializer;
 use CCMBenchmark\TingBundle\ArgumentResolver\EntityValueResolver;
 use CCMBenchmark\TingBundle\Schema\Column;
 use CCMBenchmark\TingBundle\Schema\Table;
@@ -50,6 +51,11 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class TingExtension extends Extension
 {
+    public const ENUM_SERIALIZER_BACKED_ENUM = 'backed_enum';
+    public const ENUM_SERIALIZER_SYMFONY = 'symfony_serializer';
+
+    private string $enumSerializer = self::ENUM_SERIALIZER_BACKED_ENUM;
+
     public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
@@ -59,6 +65,7 @@ class TingExtension extends Extension
 
         $config = $this->processConfiguration($configuration, $configs);
 
+        $this->enumSerializer = $config['enum_serializer'];
         $container->setParameter('ting.cache_file', $config['cache_file']);
         $container->setParameter('ting.repositories', $config['repositories']);
         $container->setParameter('ting.connections', $config['connections']);
@@ -194,6 +201,14 @@ class TingExtension extends Extension
                 $newField['type'] = 'geometry';
             } elseif (is_subclass_of($property->getType()->getName(), Uuid::class)) {
                 $newField['type'] = 'uuid';
+            } elseif (
+                $this->enumSerializer === self::ENUM_SERIALIZER_BACKED_ENUM
+                && ($mappingAttribute->getArguments()['serializer'] ?? null) === null
+                && is_subclass_of($property->getType()->getName(), \BackedEnum::class)
+            ) {
+                // The value of the case is stored, as a string (Ting's BackedEnum serializer)
+                $newField['type'] = 'string';
+                $newField['serializer'] = BackedEnumSerializer::class;
             } else {
                 $newField['type'] = match ($property->getType()->getName()) {
                     'string' => 'string',
@@ -213,12 +228,16 @@ class TingExtension extends Extension
                 // Without assoc, a JSON object is decoded to a stdClass, which an array property cannot hold
                 $options = array_replace_recursive(['unserialize' => ['assoc' => true]], $options);
             }
+            if (($newField['serializer'] ?? null) === BackedEnumSerializer::class) {
+                $options = array_replace_recursive(['unserialize' => ['enum' => $property->getType()->getName()]], $options);
+            }
             if ($newField['type'] === 'symfony_serializer') {
                 $defaultOptions = [
                     'serialize' => ['context' => ['groups' => ['*']]],
                     'unserialize' => ['context' => ['groups' => ['*']], 'type' => $property->getType()->getName()]
                 ];
-                $options = array_merge_recursive($defaultOptions, $options);
+                // The options of the attribute win (array_merge_recursive turned a "type" given twice into a list)
+                $options = array_replace_recursive($defaultOptions, $options);
                 $newField['serializer'] = SymfonySerializer::class;
             }
 

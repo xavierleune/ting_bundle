@@ -82,6 +82,30 @@ ting:
     cache_provider: cache.ting
 ```
 
+Backed enums
+------------
+
+A property typed with a backed enum is now stored with Ting's `BackedEnum` serializer: the value of the case
+(`active`), in a `string` field. ting_bundle 3.x used the Symfony serializer, which stored its JSON encoding (`"active"`,
+with the quotes, for a string-backed enum; `1` for an int-backed one). A pure enum (without backing type) still uses
+the Symfony serializer.
+
+The values stored by 3.x can't be read by the new serializer. Either convert them:
+
+```sql
+-- string-backed enums: remove the JSON quotes (int-backed values are already right)
+UPDATE city SET status = TRIM(BOTH '"' FROM status);
+```
+
+or keep the 3.x storage with the `enum_serializer` option:
+
+```yaml
+ting:
+    enum_serializer: symfony_serializer
+```
+
+A `serializer` given to `#[Column]` is still used as is.
+
 UniqueEntity
 ------------
 
