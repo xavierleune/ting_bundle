@@ -33,6 +33,7 @@ use CCMBenchmark\Ting\Query\QueryFactory;
 use CCMBenchmark\Ting\Repository\CollectionFactory;
 use CCMBenchmark\Ting\Repository\Hydrator;
 use CCMBenchmark\Ting\Repository\HydratorSingleObject;
+use CCMBenchmark\Ting\Repository\RepositoryFactory as TingRepositoryFactory;
 use CCMBenchmark\Ting\Serializer;
 use CCMBenchmark\Ting\UnitOfWork;
 use CCMBenchmark\TingBundle\ArgumentResolver\EntityValueResolver;
@@ -71,6 +72,9 @@ return static function (ContainerConfigurator $container): void {
             service('file_locator'),
             service('ting.configuration_resolver')->nullOnInvalid(),
         ]);
+
+    $services->alias(RepositoryFactory::class, 'ting');
+    $services->alias(TingRepositoryFactory::class, 'ting');
 
     $services->set('ting.metadatarepository', MetadataRepository::class)
         ->public()

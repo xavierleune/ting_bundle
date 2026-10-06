@@ -6,6 +6,9 @@
     * UniqueEntity: passing an array of options throws a ConstraintDefinitionException, use named arguments
     * DriverLogger, CacheLogger, SymfonySerializer and SerializerFactory declare the native types of the Ting 4.0 interfaces
     * Tests migrated from atoum to PHPUnit
+    * Fix: the ting service failed with Symfony 8 (RepositoryFactory::loadMetadata() and MetadataWarmer required an HttpKernel FileLocator, the file_locator service is now another class): they take a FileLocatorInterface
+    * RepositoryFactory (bundle and Ting classes) can be autowired; repositories declared as autowired services receive the cache of Ting instead of cache.app
+    * Getting started guide for Symfony (docs/getting-started.md)
     * #[Column(mutable: ...)] option; the values of a custom serializer (symfony_serializer included) are immutable when the property type is a scalar, an array, an enum, a DateTimeImmutable or a readonly class
     * Fix: EntityUserProvider::refreshUser() reloads the user by its primary key properties (TypeError: it iterated the field definitions as names)
     * Fix: a property typed array is decoded as an associative array (json "assoc" option): a JSON object became a stdClass, which an array property cannot hold

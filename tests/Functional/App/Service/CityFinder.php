@@ -4,7 +4,7 @@
  * Ting Bundle - Symfony Bundle for Ting
  * ==========================================
  *
- * Copyright (C) 2014 CCM Benchmark Group. (http://www.ccmbenchmark.com)
+ * Copyright (C) 2026 Xavier Leune
  *
  ***********************************************************************
  *
@@ -22,24 +22,20 @@
  *
  **********************************************************************/
 
-namespace CCMBenchmark\TingBundle;
 
-use CCMBenchmark\TingBundle\DependencyInjection\Compiler\RepositoryServicesPass;
-use CCMBenchmark\TingBundle\DependencyInjection\EntityFactory;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+namespace CCMBenchmark\TingBundle\Tests\Functional\App\Service;
 
-class TingBundle extends Bundle
+use CCMBenchmark\Ting\Repository\RepositoryFactory;
+use CCMBenchmark\TingBundle\Tests\Functional\App\Repository\CityRepository;
+
+class CityFinder
 {
-    public const VERSION = '4.0.0';
-
-    public function build(ContainerBuilder $container): void
+    public function __construct(private readonly RepositoryFactory $repositoryFactory)
     {
-        parent::build($container);
-        $container->addCompilerPass(new RepositoryServicesPass());
-        
-        if ($container->hasExtension('security')) {
-            $container->getExtension('security')->addUserProviderFactory(new EntityFactory());
-        }
+    }
+
+    public function getRepository(): CityRepository
+    {
+        return $this->repositoryFactory->get(CityRepository::class);
     }
 }

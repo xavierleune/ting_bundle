@@ -11,11 +11,13 @@ Upgrading from 3.x: see [UPGRADE-4.0.md](UPGRADE-4.0.md).
 
 1. Require Ting Bundle with
     ```composer require xavierleune/ting_bundle```
-2. Load Bundles in AppKernel.php
+2. Without Symfony Flex, register the bundle in `config/bundles.php`:
 
 ```php
-    new CCMBenchmark\TingBundle\TingBundle(),
+    CCMBenchmark\TingBundle\TingBundle::class => ['all' => true],
 ```
+
+New to Ting? Follow the [getting started guide](docs/getting-started.md).
 
 ## Table of contents
 - [Configuration](#configuration)

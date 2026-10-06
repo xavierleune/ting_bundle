@@ -66,6 +66,7 @@ class TingExtension extends Extension
         
         $metadataRepository = $container->getDefinition('ting.metadatarepository');
         // Repositories declared as services keep a unit of work and a connection: reset them between requests
+        // (RepositoryServicesPass gives them the cache of Ting)
         $container->registerForAutoconfiguration(Repository::class)
             ->addTag('kernel.reset', ['method' => 'reset']);
 
