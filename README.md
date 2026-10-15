@@ -140,9 +140,9 @@ class City implements NotifyPropertyInterface {
     public string $name { 
         set(string $name) {
             $this->propertyChanged('name', $this->name ?? null, $name);
-            $this->name = $name;            
+            $this->name = $name;
         }
-    };
+    }
 }
 ```
 
@@ -194,12 +194,10 @@ documentation for the details.
 ### Full example
 
 ```php
-// src/Entity/City.php
 <?php
+// src/Entity/City.php
 
 namespace App\Entity;
-
-namespace tests\fixtures;
 
 use App\Repository\CityRepository;
 use Brick\Geo\Point;
@@ -219,7 +217,7 @@ class City implements NotifyPropertyInterface
             $this->propertyChanged('id', $this->id ?? null, $id);
             $this->id = $id;
         }
-    };
+    }
     
     #[Schema\Column(column: 'field')]
     public string $fieldWithSpecifiedColumnName {
@@ -227,17 +225,23 @@ class City implements NotifyPropertyInterface
             $this->propertyChanged('fieldWithSpecifiedColumnName', $this->fieldWithSpecifiedColumnName ?? null, $fieldWithSpecifiedColumnName);
             $this->fieldWithSpecifiedColumnName = $fieldWithSpecifiedColumnName;
         }
-    };
+    }
 }
 ```
 ```php
-// src/Repository/CityRepository.php
 <?php
+// src/Repository/CityRepository.php
 
 namespace App\Repository;
 
-class CityRepository extends CCMBenchmark\Ting\Repository\Repository {
+use App\Entity\City;
+use CCMBenchmark\Ting\Repository\Repository;
 
+/**
+ * @extends Repository<City>
+ */
+class CityRepository extends Repository
+{
 }
 ```
 
@@ -263,10 +267,12 @@ It needs to implement `__serialize` too.
 If you use the component `symfony/validator`, you may need to ensure that a value (or a combination of them) is unique in your table.
 
 You can use the Constraint `CCMBenchmark\TingBundle\Validator\Constraints\UniqueEntity` to do so, as an attribute with named arguments (`fields`, `repository`, and optionally `identityFields`, `message`, `groups`, `payload`).
-Passing an array of options (`options: [...]`) is deprecated since 3.12.
+Passing an array of options (`options: [...]`) was deprecated in 3.12 and is no longer supported since 4.0.
 
 Example:
 ```php
+<?php
+
 namespace App\Entity;
 
 use App\Repository\UserRepository;
@@ -282,6 +288,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Table(name: 'users', connection: 'main', database: '%env(DATABASE_DB_NAME)%', repository: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], repository: UserRepository::class, groups: ['create'])]
 class User implements UserInterface, NotifyPropertyInterface {
+    use NotifyProperty;
+
     #[Column(autoIncrement: true, primary: true)]
     public int $id { set(int $id) {
         $this->propertyChanged('id', $this->id ?? null, $id);
@@ -332,6 +340,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -366,11 +375,16 @@ You can automatically map request parameters to entities:
 
 namespace App\Controller;
 
+use App\Entity\User;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class UserController {
-    #[Route('/api/users/{userId:myUser}', name: 'get_user', methods: ['GET'], format: 'json' )]
+    public function __construct(private readonly SerializerInterface $serializer) { }
+
+    #[Route('/api/users/{userId:user}', name: 'get_user', methods: ['GET'], format: 'json')]
     #[IsGranted('ROLE_USER')]
     public function getUser(User $user): JsonResponse
     {
@@ -383,6 +397,10 @@ For more advanced use cases, you can leverage:
 - [The Expression Language component](https://symfony.com/doc/current/components/expression_language.html)
 - The `CCMBenchmark\TingBundle\Attribute\MapEntity` attribute
 
+The expression receives `repository` (the repository of the entity), `request`, and every request attribute as a
+variable: the route parameters are available by their name (by their mapped name for `{parameter:name}`), whether or
+not the action has an argument for them.
+
 Example:
 
 ```php
@@ -390,13 +408,19 @@ Example:
 
 namespace App\Controller;
 
+use App\Entity\User;
 use CCMBenchmark\TingBundle\Attribute\MapEntity;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class UserController {
-    #[Route('/api/users/{firstname}/{lastname}', name: 'get_user', methods: ['GET'], format: 'json' )]
+    public function __construct(private readonly SerializerInterface $serializer) { }
+
+    #[Route('/api/users/{firstname}/{lastname}', name: 'get_user', methods: ['GET'], format: 'json')]
     #[IsGranted('ROLE_USER')]
-    public function getUser(#[MapEntity(expr: 'repository.getOneBy({"firstname": firstname, "lastname": lastname}')] User $user): JsonResponse
+    public function getUser(#[MapEntity(expr: 'repository.getOneBy({"firstname": firstname, "lastname": lastname})')] User $user): JsonResponse
     {
         return new JsonResponse($this->serializer->serialize($user, 'json', ['groups' => 'default']), json: true);
     }

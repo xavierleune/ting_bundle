@@ -29,11 +29,14 @@ use CCMBenchmark\Ting\Serializer\BackedEnum;
 use CCMBenchmark\TingBundle\DependencyInjection\TingExtension;
 use CCMBenchmark\TingBundle\Serializer\SymfonySerializer;
 use CCMBenchmark\TingBundle\Tests\Support\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use tests\fixtures\EntityWithAttributes;
+use tests\fixtures\EntityWithUnionType;
+use tests\fixtures\EntityWithUntypedProperty;
 use tests\fixtures\EntityWithValueObjects;
 use tests\fixtures\Status;
 
@@ -120,6 +123,27 @@ class TingExtensionTest extends TestCase
         $this->assertSame('symfony_serializer', $fields['status']['type']);
         $this->assertSame(SymfonySerializer::class, $fields['status']['serializer']);
         $this->assertSame(Status::class, $fields['status']['serializer_options']['unserialize']['type']);
+    }
+
+    public static function unmappableTypeProvider(): array
+    {
+        return [
+            'union' => [EntityWithUnionType::class, 'string|int'],
+            'untyped' => [EntityWithUntypedProperty::class, 'no type'],
+        ];
+    }
+
+    /**
+     * @param class-string $entity
+     */
+    #[DataProvider('unmappableTypeProvider')]
+    public function testAColumnNeedsASingleType(string $entity, string $given): void
+    {
+        $this->assertThrows(
+            \LogicException::class,
+            fn () => $this->getFieldsOfEntity($entity),
+            sprintf('Property %s::$reference must have a single type (nullable or not) to be mapped by #[Column], %s given.', $entity, $given)
+        );
     }
 
     /**

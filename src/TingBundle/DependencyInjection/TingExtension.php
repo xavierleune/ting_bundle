@@ -197,20 +197,31 @@ class TingExtension extends Extension
                 $newField['primary'] = true;
             }
 
-            if (is_subclass_of($property->getType()->getName(), '\Brick\Geo\Geometry')) {
+            $type = $property->getType();
+            if (!$type instanceof \ReflectionNamedType) {
+                throw new \LogicException(sprintf(
+                    'Property %s::$%s must have a single type (nullable or not) to be mapped by #[Column], %s given.',
+                    $reflector->name,
+                    $property->getName(),
+                    $type === null ? 'no type' : (string) $type
+                ));
+            }
+            $typeName = $type->getName();
+
+            if (is_subclass_of($typeName, '\Brick\Geo\Geometry')) {
                 $newField['type'] = 'geometry';
-            } elseif (is_subclass_of($property->getType()->getName(), Uuid::class)) {
+            } elseif (is_subclass_of($typeName, Uuid::class)) {
                 $newField['type'] = 'uuid';
             } elseif (
                 $this->enumSerializer === self::ENUM_SERIALIZER_BACKED_ENUM
                 && ($mappingAttribute->getArguments()['serializer'] ?? null) === null
-                && is_subclass_of($property->getType()->getName(), \BackedEnum::class)
+                && is_subclass_of($typeName, \BackedEnum::class)
             ) {
                 // The value of the case is stored, as a string (Ting's BackedEnum serializer)
                 $newField['type'] = 'string';
                 $newField['serializer'] = BackedEnumSerializer::class;
             } else {
-                $newField['type'] = match ($property->getType()->getName()) {
+                $newField['type'] = match ($typeName) {
                     'string' => 'string',
                     'int' => 'int',
                     'float' => 'double',
@@ -224,17 +235,17 @@ class TingExtension extends Extension
                 };
             }
             $options = $mappingAttribute->getArguments()['serializerOptions'] ?? [];
-            if ($newField['type'] === 'json' && $property->getType()->getName() === 'array') {
+            if ($newField['type'] === 'json' && $typeName === 'array') {
                 // Without assoc, a JSON object is decoded to a stdClass, which an array property cannot hold
                 $options = array_replace_recursive(['unserialize' => ['assoc' => true]], $options);
             }
             if (($newField['serializer'] ?? null) === BackedEnumSerializer::class) {
-                $options = array_replace_recursive(['unserialize' => ['enum' => $property->getType()->getName()]], $options);
+                $options = array_replace_recursive(['unserialize' => ['enum' => $typeName]], $options);
             }
             if ($newField['type'] === 'symfony_serializer') {
                 $defaultOptions = [
                     'serialize' => ['context' => ['groups' => ['*']]],
-                    'unserialize' => ['context' => ['groups' => ['*']], 'type' => $property->getType()->getName()]
+                    'unserialize' => ['context' => ['groups' => ['*']], 'type' => $typeName]
                 ];
                 // The options of the attribute win (array_merge_recursive turned a "type" given twice into a list)
                 $options = array_replace_recursive($defaultOptions, $options);
@@ -250,7 +261,7 @@ class TingExtension extends Extension
 
             if (array_key_exists('mutable', $mappingAttribute->getArguments())) {
                 $newField['mutable'] = (bool) $mappingAttribute->getArguments()['mutable'];
-            } elseif (isset($newField['serializer']) && $this->isImmutableType($property->getType()->getName())) {
+            } elseif (isset($newField['serializer']) && $this->isImmutableType($typeName)) {
                 // Ting considers the values of a custom serializer mutable: the type of the property tells better
                 $newField['mutable'] = false;
             }
