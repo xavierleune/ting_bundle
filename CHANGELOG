@@ -20,6 +20,7 @@
     * Fix: EntityValueResolver and EntityUserProvider with metadata loaded from repositories (batchLoadMetadata) or used for hydration only (TypeError on RepositoryFactory::get(null))
     * A #[Column] property with a union type or without type throws a LogicException naming it (it failed with an Error on ReflectionType::getName())
     * README: examples fixed for copy-paste (entity, repository, UniqueEntity, MapEntity expr), the variables of a MapEntity expression are documented
+    * README: configuration example for a Symfony application (was a Symfony 2 bundle layout), eraseCredentials() marked #[\Deprecated] (deprecated since Symfony 7.3, removed in 8), Ting's behaviour left to Ting's documentation
 
 3.12.0 (2026-10-02):
     * Package renamed to xavierleune/ting_bundle (replaces ccmbenchmark/ting_bundle)
@@ -45,7 +46,7 @@
     * Enhancement: Better looking profiling tab
 
 3.9.0 (2025-01-17):
-    * Feature: (SF6.2+) Supports automatic value resolving in controllers (with or without MapEntity), see [https://github.com/symfony/symfony/blob/7.2/src/Symfony/Bridge/Doctrine/ArgumentResolver/EntityValueResolver.php](Doctrine Bridge)
+    * Feature: (SF6.2+) Supports automatic value resolving in controllers (with or without MapEntity), see [Doctrine Bridge](https://github.com/symfony/symfony/blob/7.2/src/Symfony/Bridge/Doctrine/ArgumentResolver/EntityValueResolver.php)
     * Feature: supports serializer options in attributes
     * Feature: Support UserProvider
     * The constraint "UniqueEntity" can now be used with an attribute on your class
