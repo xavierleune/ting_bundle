@@ -72,6 +72,10 @@ ting:
             #         password: '%env(DATABASE_PASSWORD)%'
             #         port: 3306
 
+    # Connection and database of the entities that do not give them
+    default_connection: main
+    default_database: world
+
     databases_options:
         world:
             timezone: 'Europe/Paris'
@@ -84,8 +88,9 @@ ting:
 
 ## Creating the entity
 
-An entity is a plain PHP object. The `#[Table]` attribute links it to its table, connection, database and repository;
-each mapped property gets a `#[Column]` attribute, and its type is deduced from the type of the property (see
+An entity is a plain PHP object. The `#[Table]` attribute links it to its table and repository; its connection and
+database are `default_connection` and `default_database` of the configuration, unless it gives them (`connection:`,
+`database:`). Each mapped property gets a `#[Column]` attribute, and its type is deduced from the type of the property (see
 [the README](../README.md#declare-metadata-with-attributes)).
 
 Ting writes the properties whose changes are notified: implement `NotifyPropertyInterface` with the `NotifyProperty`
@@ -103,7 +108,7 @@ use CCMBenchmark\Ting\Entity\NotifyPropertyInterface;
 use CCMBenchmark\TingBundle\Schema\Column;
 use CCMBenchmark\TingBundle\Schema\Table;
 
-#[Table(name: 'city', connection: 'main', database: 'world', repository: CityRepository::class)]
+#[Table(name: 'city', repository: CityRepository::class)]
 class City implements NotifyPropertyInterface
 {
     use NotifyProperty;

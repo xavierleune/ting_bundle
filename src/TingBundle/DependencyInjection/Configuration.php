@@ -40,7 +40,28 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
+            ->validate()
+                ->ifTrue(static fn (array $config): bool => isset($config['default_connection'])
+                    && !\array_key_exists($config['default_connection'], $config['connections']))
+                ->then(static function (array $config): never {
+                    $exception = new InvalidConfigurationException(sprintf(
+                        'Invalid configuration for path "ting.default_connection": the connection "%s" is not declared in ting.connections.',
+                        $config['default_connection']
+                    ));
+                    $exception->setPath('ting.default_connection');
+
+                    throw $exception;
+                })
+            ->end()
             ->children()
+                ->scalarNode('default_connection')
+                    ->info('Connection of the #[Table] attributes that do not give one.')
+                    ->defaultNull()
+                ->end()
+                ->scalarNode('default_database')
+                    ->info('Database of the #[Table] attributes that do not give one.')
+                    ->defaultNull()
+                ->end()
                 ->scalarNode('cache_file')
                     ->defaultValue('ting.' . TingBundle::VERSION . '.php')
                 ->end()

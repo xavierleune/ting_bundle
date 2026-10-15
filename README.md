@@ -78,6 +78,10 @@ Configuration
             baz:
                 timezone: 'Europe/Paris'
 
+        # Optional: connection and database of the #[Table] attributes that do not give them
+        default_connection: main
+        default_database: '%env(DATABASE_NAME)%'
+
         # Optional: id of a Symfony cache pool, used by cached queries (a NullAdapter by default)
         cache_provider: cache.ting
 
@@ -155,7 +159,22 @@ Attributes are provided to declare an entity. Relevant attributes are available 
 
 ### Table
 - Full name: `CCMBenchmark\TingBundle\Schema\Table`
-- This attribute must be added to your class, with all relevant options (table, connection, etc.).
+- This attribute must be added to your class.
+- Arguments:
+  - `name`: the table
+  - `repository`: the repository class (required)
+  - `connection`: the connection, `default_connection` of the configuration when omitted
+  - `database`: the database, `default_database` of the configuration when omitted
+
+```php
+// With default_connection and default_database in the configuration
+#[Schema\Table(name: 'city', repository: CityRepository::class)]
+// Explicit values win over the configuration
+#[Schema\Table(name: 'log', connection: 'logs', database: 'audit', repository: LogRepository::class)]
+```
+
+Building the container fails with a `LogicException` naming the entity when the connection or the database is neither
+given nor configured, or when the repository is missing.
 
 ### Column
 - Full name: `CCMBenchmark\TingBundle\Schema\Column`

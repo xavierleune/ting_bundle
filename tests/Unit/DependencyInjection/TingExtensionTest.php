@@ -30,14 +30,19 @@ use CCMBenchmark\TingBundle\DependencyInjection\TingExtension;
 use CCMBenchmark\TingBundle\Serializer\SymfonySerializer;
 use CCMBenchmark\TingBundle\Tests\Support\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use tests\fixtures\EntityWithAttributes;
+use tests\fixtures\EntityWithoutRepository;
+use tests\fixtures\EntityWithTableDefaults;
 use tests\fixtures\EntityWithUnionType;
 use tests\fixtures\EntityWithUntypedProperty;
 use tests\fixtures\EntityWithValueObjects;
+use tests\fixtures\SimpleRepository;
 use tests\fixtures\Status;
 
 class TingExtensionTest extends TestCase
@@ -125,6 +130,69 @@ class TingExtensionTest extends TestCase
         $this->assertSame(Status::class, $fields['status']['serializer_options']['unserialize']['type']);
     }
 
+    private const TABLE_DEFAULTS = [
+        'default_connection' => 'main',
+        'default_database' => '%env(DATABASE_NAME)%',
+        'connections' => ['main' => ['namespace' => '\\CCMBenchmark\\Ting\\Driver\\Mysqli']],
+    ];
+
+    public function testTableTakesTheDefaultConnectionAndDatabase(): void
+    {
+        $table = $this->getTableOfEntity(EntityWithTableDefaults::class, self::TABLE_DEFAULTS);
+
+        $this->assertSame('main', $table['setConnectionName']);
+        // The placeholder of an environment variable, resolved at runtime
+        $this->assertMatchesRegularExpression('/^env_\w+_DATABASE_NAME_\w+$/', $table['setDatabase']);
+        $this->assertSame(SimpleRepository::class, $table['setRepository']);
+    }
+
+    public function testTableValuesWinOverTheDefaults(): void
+    {
+        $table = $this->getTableOfEntity(EntityWithAttributes::class, self::TABLE_DEFAULTS);
+
+        $this->assertSame('default', $table['setConnectionName']);
+        $this->assertSame('default', $table['setDatabase']);
+    }
+
+    public static function missingTableValueProvider(): array
+    {
+        return [
+            'connection' => [['default_database' => 'app'], 'connection', 'ting.default_connection'],
+            'database' => [['default_connection' => 'main', 'connections' => self::TABLE_DEFAULTS['connections']], 'database', 'ting.default_database'],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $config
+     */
+    #[DataProvider('missingTableValueProvider')]
+    public function testTableWithoutValueNeedsADefault(array $config, string $argument, string $option): void
+    {
+        $this->assertThrows(
+            \LogicException::class,
+            fn () => $this->getTableOfEntity(EntityWithTableDefaults::class, $config),
+            sprintf('The #[Table] attribute of %s has no %s: give it one, or set %s.', EntityWithTableDefaults::class, $argument, $option)
+        );
+    }
+
+    public function testTableNeedsARepository(): void
+    {
+        $this->assertThrows(
+            \LogicException::class,
+            fn () => $this->getTableOfEntity(EntityWithoutRepository::class),
+            sprintf('The #[Table] attribute of %s has no repository.', EntityWithoutRepository::class)
+        );
+    }
+
+    public function testDefaultConnectionMustBeDeclared(): void
+    {
+        $this->assertThrows(
+            InvalidConfigurationException::class,
+            fn () => $this->getTableOfEntity(EntityWithTableDefaults::class, ['default_connection' => 'other'] + self::TABLE_DEFAULTS),
+            'Invalid configuration for path "ting.default_connection": the connection "other" is not declared in ting.connections.'
+        );
+    }
+
     public static function unmappableTypeProvider(): array
     {
         return [
@@ -153,7 +221,37 @@ class TingExtensionTest extends TestCase
      */
     private function getFieldsOfEntity(string $entity, array $config = []): array
     {
-        $containerBuilder = new ContainerBuilder(new ParameterBag([
+        $fields = [];
+        foreach ($this->getMetadataCallsOfEntity($entity, $config) as [$method, $arguments]) {
+            if ($method === 'addField') {
+                $fields[$arguments[0]['fieldName']] = $arguments[0];
+            }
+        }
+
+        return $fields;
+    }
+
+    /**
+     * @param class-string $entity
+     * @param array<string, mixed> $config
+     * @return array<string, mixed> first argument of the setters called on the metadata, by method
+     */
+    private function getTableOfEntity(string $entity, array $config = []): array
+    {
+        $calls = $this->getMetadataCallsOfEntity($entity, $config);
+
+        return array_column(array_map(fn (array $call) => [$call[0], $call[1][0]], $calls), 1, 0);
+    }
+
+    /**
+     * @param class-string $entity
+     * @param array<string, mixed> $config
+     * @return list<array{string, array<mixed>}> method calls on the metadata of the entity
+     */
+    private function getMetadataCallsOfEntity(string $entity, array $config = []): array
+    {
+        // As in a kernel, %env()% parameters are resolved at runtime
+        $containerBuilder = new ContainerBuilder(new EnvPlaceholderParameterBag([
             'kernel.debug' => false,
             'kernel.cache_dir' => sys_get_temp_dir()
         ]));
@@ -163,13 +261,6 @@ class TingExtensionTest extends TestCase
         (new TingExtension())->load([$config], $containerBuilder);
         $containerBuilder->compile();
 
-        $fields = [];
-        foreach ($containerBuilder->getDefinition('ting.metadatarepository')->getMethodCalls()[0][1][1]->getMethodCalls() as [$method, $arguments]) {
-            if ($method === 'addField') {
-                $fields[$arguments[0]['fieldName']] = $arguments[0];
-            }
-        }
-
-        return $fields;
+        return $containerBuilder->getDefinition('ting.metadatarepository')->getMethodCalls()[0][1][1]->getMethodCalls();
     }
 }
