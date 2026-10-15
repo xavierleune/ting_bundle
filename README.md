@@ -1,7 +1,8 @@
 > **ℹ️ This is a maintained fork of [ccmbenchmark/ting_bundle](https://github.com/ccmbenchmark/ting_bundle).**
 > The upstream project is no longer maintained. This fork keeps the full history and tags of the original repository,
 > and is published as `xavierleune/ting_bundle`. PHP namespaces (`CCMBenchmark\TingBundle`) are unchanged, so switching
-> only requires replacing the package name in your `composer.json`.
+> only requires replacing the package name in your `composer.json`. With Symfony Flex, check `config/bundles.php`
+> afterwards: see [Switching from ccmbenchmark/ting_bundle](UPGRADE-4.0.md#switching-from-ccmbenchmarkting_bundle).
 
 ## Installation
 
