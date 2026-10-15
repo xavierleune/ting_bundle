@@ -265,19 +265,6 @@ class CityController
 }
 ```
 
-The repository API:
-
-```php
-$city = $cityRepository->get(3);                        // by primary key, or null
-$paris = $cityRepository->getOneBy(['name' => 'Paris']); // first match, or null
-$cities = $cityRepository->getBy(['countryCode' => 'FRA']);
-$all = $cityRepository->getAll();
-
-$paris->setPopulation(2_200_000);
-$cityRepository->save($paris);   // only writes the properties that changed
-$cityRepository->delete($paris);
-```
-
 You can also get a repository from the `CCMBenchmark\Ting\Repository\RepositoryFactory` service (`ting`):
 `$repositoryFactory->get(CityRepository::class)`.
 

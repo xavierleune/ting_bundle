@@ -3,8 +3,7 @@
 > and is published as `xavierleune/ting_bundle`. PHP namespaces (`CCMBenchmark\TingBundle`) are unchanged, so switching
 > only requires replacing the package name in your `composer.json`.
 
-Installation
-============
+## Installation
 
 Requires PHP 8.2+, Symfony 7.4 or 8 (Symfony 8 requires PHP 8.4) and [Ting 4](https://github.com/xavierleune/ting).
 Upgrading from 3.x: see [UPGRADE-4.0.md](UPGRADE-4.0.md).
@@ -21,73 +20,69 @@ New to Ting? Follow the [getting started guide](docs/getting-started.md).
 
 ## Table of contents
 - [Configuration](#configuration)
-    - [Main configuration](#main-configuration)
     - [About public properties](#about-public-properties)
     - [Declare metadata with attributes](#declare-metadata-with-attributes)
-- [Using Ting as a User Provider](#using-ting-a-user-provider)
+- [Using Ting as a User Provider](#using-ting-as-a-user-provider)
 - [Declare a unique constraint](#declare-a-unique-constraint-in-a-table)
 - [Using Ting as a Value Resolver](#using-ting-as-a-value-resolver)
 
-Configuration
-=============
+## Configuration
 
-## Main configuration
+```yaml
+# config/packages/ting.yaml
+ting:
+    connections:
+        main:
+            namespace: CCMBenchmark\Ting\Driver\Mysqli
+            charset: utf8mb4
+            primary:
+                host: '%env(DATABASE_HOST)%'
+                user: '%env(DATABASE_USER)%'
+                password: '%env(DATABASE_PASSWORD)%'
+                port: 3306
+            # Optional: reads go to a replica, writes to the primary
+            replicas:
+                replica1:
+                    host: '%env(DATABASE_REPLICA_HOST)%'
+                    user: '%env(DATABASE_USER)%'
+                    password: '%env(DATABASE_PASSWORD)%'
+                    port: 3306
+
+    databases_options:
+        app:
+            timezone: 'Europe/Paris'
+
+    # Optional: connection and database of the #[Table] attributes that do not give them
+    default_connection: main
+    default_database: app
+
+    # Optional: id of a Symfony cache pool, used by cached queries (a NullAdapter by default)
+    cache_provider: cache.ting
+
+    # Optional: how properties typed with a backed enum are stored, see "Declare metadata with attributes"
+    # backed_enum (default): the value of the case; symfony_serializer: its JSON encoding, as ting_bundle < 4.0
+    enum_serializer: backed_enum
 ```
-#!yaml
 
-    ting:
-        repositories: # Unnecessary if entities registered with attributes
-            Acme:
-                namespace: Acme\DemoBundle\Entity
-                directory: "@DemoBundle/Entity"
-                options:
-                    #pass options to your repository
-                    Acme\DemoBundle\BazRepository:
-                        extra:
-                            bar: hello
-                            foo: world
-                    Acme\DemoBundle\FooRepository:
-                        extra:
-                            bar: hello
-                            foo: world
-                    default:
-                        connection: main
-                        database: baz
+Entities declared with [attributes](#declare-metadata-with-attributes) need nothing more. Repositories declaring their
+metadata in PHP (Ting's `MetadataInitializer`) are loaded with `repositories`:
 
-        connections:
-            main:
-                namespace: CCMBenchmark\Ting\Driver\Mysqli
-                primary:
-                    host:     localhost
-                    user:     world_sample
-                    password: world_sample
-                    port:     3306
-                replicas:
-                    replica1:
-                        host:     127.0.0.1
-                        user:     world_sample_ro
-                        password: world_sample_ro
-                        port:     3306
-                    replica2:
-                        host:     127.0.1.1
-                        user:     world_sample_ro
-                        password: world_sample_ro
-                        port:     3306
-
-        databases_options:
-            baz:
-                timezone: 'Europe/Paris'
-
-        # Optional: connection and database of the #[Table] attributes that do not give them
-        default_connection: main
-        default_database: '%env(DATABASE_NAME)%'
-
-        # Optional: id of a Symfony cache pool, used by cached queries (a NullAdapter by default)
-        cache_provider: cache.ting
-
-        # Optional: how properties typed with a backed enum are stored, see "Declare metadata with attributes"
-        # backed_enum (default): the value of the case; symfony_serializer: its JSON encoding, as ting_bundle < 4.0
-        enum_serializer: backed_enum
+```yaml
+ting:
+    repositories:
+        app:
+            namespace: App\Repository
+            directory: '%kernel.project_dir%/src/Repository'
+            glob: '*Repository.php' # default
+            options:
+                # Options of every repository: connection, database and extra (passed to initMetadata())
+                default:
+                    connection: main
+                    database: app
+                # Options of one repository
+                App\Repository\CityRepository:
+                    extra:
+                        foo: bar
 ```
 
 The cache pool is any Symfony cache pool, for instance:
@@ -128,7 +123,7 @@ class City implements NotifyPropertyInterface {
 
 ```
 
-For PHP >= 8.4, you may use a property hook instead. This hook will be bypassed by Ting for hydratation.
+For PHP >= 8.4, you may use a property hook instead. This hook will be bypassed by Ting for hydration.
 
 ```php
 <?php
@@ -169,8 +164,11 @@ Attributes are provided to declare an entity. Relevant attributes are available 
 ```php
 // With default_connection and default_database in the configuration
 #[Schema\Table(name: 'city', repository: CityRepository::class)]
+class City { /* ... */ }
+
 // Explicit values win over the configuration
 #[Schema\Table(name: 'log', connection: 'logs', database: 'audit', repository: LogRepository::class)]
+class Log { /* ... */ }
 ```
 
 Building the container fails with a `LogicException` naming the entity when the connection or the database is neither
@@ -193,20 +191,15 @@ given nor configured, or when the repository is missing.
 | any other class (pure enum, value object...)    | `symfony_serializer` (JSON), when symfony/serializer is installed |
 
 #### Change tracking: `mutable`
-Ting writes a field when its setter notifies the change (`propertyChanged()`). A value that can be modified in place
-(`$city->updatedAt->modify('+1 day')`, `$city->address->street = '...'`) calls no setter: for such a *mutable* field,
-Ting 4 keeps the raw value read from the database, and on save writes the field when its value differs, or when its
-setter notified a change. A save without change sends no `UPDATE`. An *immutable* field is only written when
-notified: a value modified in place on a field marked immutable is not saved.
+A *mutable* value can be modified in place without a setter (`$city->updatedAt->modify('+1 day')`): Ting compares it
+on save instead of relying on `propertyChanged()`. Ting decides from the serializer which values are mutable; the
+bundle refines it from the type of the property:
 
-- Ting decides from the serializer: `\DateTime`, and objects of a custom serializer (including `symfony_serializer`), are
-  mutable; scalars, arrays, `\DateTimeImmutable`, backed enums... are not.
-- The bundle also marks as immutable the values of a custom serializer whose property type is a scalar, an array, an
-  enum, a `\DateTimeImmutable` or a `readonly` class.
+- the values of a custom serializer (including `symfony_serializer`) are immutable when the property type is a scalar,
+  an array, an enum, a `\DateTimeImmutable` or a `readonly` class;
 - `#[Column(mutable: true|false)]` overrides both.
 
-Prefer `\DateTimeImmutable` dates and `readonly` value objects: their changes always go through a setter, and Ting
-does not have to keep and compare their value on save. See
+Prefer `\DateTimeImmutable` dates and `readonly` value objects. See
 [Tracking changes](https://github.com/xavierleune/ting/blob/main/docs/entities.md#tracking-changes) in Ting's
 documentation for the details.
 
@@ -219,14 +212,12 @@ documentation for the details.
 namespace App\Entity;
 
 use App\Repository\CityRepository;
-use Brick\Geo\Point;
 use CCMBenchmark\Ting\Entity\NotifyProperty;
 use CCMBenchmark\Ting\Entity\NotifyPropertyInterface;
 use CCMBenchmark\TingBundle\Schema;
-use Symfony\Component\Uid\Uuid;
-use Symfony\Component\Uid\UuidV4;
 
-#[Schema\Table('city_table', 'connectionName', '%env(DATABASE_NAME)%', CityRepository::class)]
+// The connection and the database are default_connection and default_database of the configuration
+#[Schema\Table(name: 'city_table', repository: CityRepository::class)]
 class City implements NotifyPropertyInterface
 {
     use NotifyProperty;
@@ -279,8 +270,9 @@ security:
         property: email
 ```
 
-Your entity will have to implements the following interfaces: `Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface` (for password authenticated users) and `Symfony\Component\Security\Core\User\UserInterface` (common to all kind of users).
-It needs to implement `__serialize` too.
+Your entity must implement the following interfaces: `Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface` (for password authenticated users) and `Symfony\Component\Security\Core\User\UserInterface` (common to all kind of users).
+It needs to implement `__serialize` too: the user is serialized in the session, keep only what identifies it (and
+the password hash for password authenticated users), not other sensitive data.
 
 ## Declare a Unique constraint in a table
 If you use the component `symfony/validator`, you may need to ensure that a value (or a combination of them) is unique in your table.
@@ -304,7 +296,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[Table(name: 'users', connection: 'main', database: '%env(DATABASE_DB_NAME)%', repository: UserRepository::class)]
+#[Table(name: 'users', repository: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], repository: UserRepository::class, groups: ['create'])]
 class User implements UserInterface, NotifyPropertyInterface {
     use NotifyProperty;
@@ -329,9 +321,10 @@ class User implements UserInterface, NotifyPropertyInterface {
         return ['ROLE_USER'];
     }
 
+    // Required by UserInterface in Symfony 7.4, removed in Symfony 8: #[\Deprecated] silences the 7.3+ deprecation
+    #[\Deprecated]
     public function eraseCredentials(): void
     {
-        
     }
 
     public function getUserIdentifier(): string
@@ -357,18 +350,19 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/users', methods:['POST'], format: 'json')]
-class createUserController extends AbstractController {
-    public function __construct (private readonly ValidatorInterface $validator, private readonly UserRepository $userRepository) { }
+#[Route('/users', methods: ['POST'], format: 'json')]
+class CreateUserController
+{
+    public function __construct(private readonly ValidatorInterface $validator, private readonly UserRepository $userRepository) { }
+
     public function __invoke(
         #[MapRequestPayload(serializationContext: ['groups' => ['create']])] User $user
-    ) :JsonResponse {
+    ): JsonResponse {
         $violations = $this->validator->validate($user, groups: ['create']);
         if ($violations->count() > 0) {
             return new JsonResponse(['message' => 'Errors...'], 422);

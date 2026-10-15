@@ -34,8 +34,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: "${{ matrix.php }}"
-          extensions: bcmath, bz2, gettext, mbstring, memcached, mcrypt, mysqli, opcache, pdo_mysql, zip, pdo, intl, json, pdo_pgsql, pgsql, session, simplexml, xml
-          tools: "composer:${{ matrix.composer }}, pecl"
+          extensions: bcmath, bz2, gettext, mbstring, mysqli, opcache, pdo_mysql, zip, pdo, intl, pdo_pgsql, pgsql, session, simplexml, xml
+          tools: "composer:${{ matrix.composer }}"
 
       - name: "Install ${{ matrix.deps }} deps with composer"
         uses: "ramsey/composer-install@v3"

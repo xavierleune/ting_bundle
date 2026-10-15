@@ -43,7 +43,7 @@ class MapEntity extends ValueResolver
      *                                                  one or more properties so that not all are used
      * @param bool|null                  $stripNull     Whether to prevent null values from being used as parameters in the query (defaults to false)
      * @param string[]|string|null       $id            If an id option is configured and matches a route parameter, then the resolver will find by the primary key
-     * @param bool                       $forcePrimary    If true, forces Ting to always use the primary / master to retrieve the object
+     * @param bool                       $forcePrimary    If true, forces Ting to always use the primary to retrieve the object
      */
     public function __construct(
         public ?string $class = null,
