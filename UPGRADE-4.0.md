@@ -12,6 +12,28 @@ Requirements
 * `ccmbenchmark/ting` is replaced by `xavierleune/ting` `^4.0`, which declares `replace: ccmbenchmark/ting`.
 * `doctrine/cache` is no longer required.
 
+Switching from ccmbenchmark/ting_bundle
+---------------------------------------
+
+With Symfony Flex, replacing `ccmbenchmark/ting_bundle` by `xavierleune/ting_bundle` removes the bundle from
+`config/bundles.php`. Flex configures the new package, then unconfigures the old one, which has the same bundle class.
+The container then fails with `There is no extension able to load the configuration for "ting"`, starting with the
+`cache:clear` run by Composer.
+
+Restore the line by running the recipe of the new package again:
+
+```bash
+composer recipes:install xavierleune/ting_bundle --force
+```
+
+or add it back to `config/bundles.php`:
+
+```php
+CCMBenchmark\TingBundle\TingBundle::class => ['all' => true],
+```
+
+This also applies when switching to `xavierleune/ting_bundle` 3.12.
+
 Connections: primary / replicas
 -------------------------------
 
