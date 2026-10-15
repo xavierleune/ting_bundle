@@ -31,7 +31,7 @@ use CCMBenchmark\TingBundle\Schema\Column;
 use CCMBenchmark\TingBundle\Schema\Table;
 use CCMBenchmark\TingBundle\Tests\Functional\App\Repository\CityRepository;
 
-#[Table(name: 'city', connection: 'main', database: 'world', repository: CityRepository::class)]
+#[Table(name: 'city', repository: CityRepository::class)]
 class City implements NotifyPropertyInterface
 {
     use NotifyProperty;

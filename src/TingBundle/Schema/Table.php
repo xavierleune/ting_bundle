@@ -5,6 +5,7 @@
  * ==========================================
  *
  * Copyright (C) 2024 CCM Benchmark Group. (http://www.ccmbenchmark.com)
+ * Copyright (C) 2026 Xavier Leune
  *
  ***********************************************************************
  *
@@ -27,8 +28,16 @@ namespace CCMBenchmark\TingBundle\Schema;
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class Table
 {
-    public function __construct(public string $name, public string $connection, public string $database, public string $repository)
-    {
-        
+    /**
+     * @param string|null $connection defaults to the ting.default_connection option
+     * @param string|null $database defaults to the ting.default_database option
+     * @param class-string|null $repository required: optional only to let the arguments before it be omitted
+     */
+    public function __construct(
+        public string $name,
+        public ?string $connection = null,
+        public ?string $database = null,
+        public ?string $repository = null,
+    ) {
     }
 }

@@ -68,6 +68,8 @@ class Kernel extends BaseKernel
             'cache' => ['pools' => ['cache.ting' => ['adapter' => 'cache.adapter.array']]],
         ]);
         $container->extension('ting', [
+            'default_connection' => 'main',
+            'default_database' => '%env(TING_DATABASE)%',
             'connections' => [
                 'main' => [
                     'namespace' => 'CCMBenchmark\Ting\Driver\Mysqli',

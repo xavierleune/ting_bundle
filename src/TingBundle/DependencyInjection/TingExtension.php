@@ -55,6 +55,8 @@ class TingExtension extends Extension
     public const ENUM_SERIALIZER_SYMFONY = 'symfony_serializer';
 
     private string $enumSerializer = self::ENUM_SERIALIZER_BACKED_ENUM;
+    private ?string $defaultConnection = null;
+    private ?string $defaultDatabase = null;
 
     public function load(array $configs, ContainerBuilder $container): void
     {
@@ -66,6 +68,8 @@ class TingExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $this->enumSerializer = $config['enum_serializer'];
+        $this->defaultConnection = $config['default_connection'];
+        $this->defaultDatabase = $config['default_database'];
         $container->setParameter('ting.cache_file', $config['cache_file']);
         $container->setParameter('ting.repositories', $config['repositories']);
         $container->setParameter('ting.connections', $config['connections']);
@@ -172,8 +176,15 @@ class TingExtension extends Extension
         $newMetadata->addArgument(new Reference('ting.serializerfactory'));
         $newMetadata->addMethodCall('setEntity', [$reflector->name]);
         $newMetadata->addMethodCall('setTable', [$attribute->name]);
-        $newMetadata->addMethodCall('setDatabase', [$attribute->database]);
-        $newMetadata->addMethodCall('setConnectionName', [$attribute->connection]);
+        if ($attribute->repository === null) {
+            throw new \LogicException(sprintf('The #[Table] attribute of %s has no repository.', $reflector->name));
+        }
+        $newMetadata->addMethodCall('setDatabase', [
+            $attribute->database ?? $this->defaultDatabase ?? throw $this->missingTableValue($reflector, 'database'),
+        ]);
+        $newMetadata->addMethodCall('setConnectionName', [
+            $attribute->connection ?? $this->defaultConnection ?? throw $this->missingTableValue($reflector, 'connection'),
+        ]);
         $newMetadata->addMethodCall('setRepository', [$attribute->repository]);
 
         foreach ($reflector->getProperties() as $property) {
@@ -269,6 +280,16 @@ class TingExtension extends Extension
             $newMetadata->addMethodCall('addField', [$newField]);
         }
         return $newMetadata;
+    }
+
+    private function missingTableValue(\ReflectionClass $reflector, string $argument): \LogicException
+    {
+        return new \LogicException(sprintf(
+            'The #[Table] attribute of %s has no %s: give it one, or set ting.default_%s.',
+            $reflector->name,
+            $argument,
+            $argument
+        ));
     }
 
     /**

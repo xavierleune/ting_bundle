@@ -46,6 +46,7 @@ class GettingStartedTest extends TestCase
     protected function setUp(): void
     {
         $this->exceptionHandler = $this->getExceptionHandler();
+        $_SERVER['TING_DATABASE'] = 'world';
         $this->kernel = new Kernel('test', false);
         (new Filesystem())->remove($this->kernel->getCacheDir());
         $this->kernel->boot();
@@ -54,6 +55,7 @@ class GettingStartedTest extends TestCase
     protected function tearDown(): void
     {
         $this->kernel->shutdown();
+        unset($_SERVER['TING_DATABASE']);
         (new Filesystem())->remove($this->kernel->getCacheDir());
         // Symfony 7.4.0 leaves the error handler it registers when the FrameworkBundle boots
         while ($this->getExceptionHandler() !== $this->exceptionHandler) {
@@ -79,6 +81,9 @@ class GettingStartedTest extends TestCase
         $this->assertInstanceOf(Metadata::class, $metadata);
         $this->assertSame(City::class, $metadata->getEntity());
         $this->assertSame('city', $metadata->getTable());
+        // City gives neither: ting.default_connection and ting.default_database (from the environment)
+        $this->assertSame('main', $metadata->getConnectionName());
+        $this->assertSame('world', $metadata->getDatabase());
     }
 
     public function testMetadataCacheIsWarmedUp(): void
