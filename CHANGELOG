@@ -20,6 +20,7 @@
     * Fix: EntityValueResolver and EntityUserProvider with metadata loaded from repositories (batchLoadMetadata) or used for hydration only (TypeError on RepositoryFactory::get(null))
     * A #[Column] property with a union type or without type throws a LogicException naming it (it failed with an Error on ReflectionType::getName())
     * README: examples fixed for copy-paste (entity, repository, UniqueEntity, MapEntity expr), the variables of a MapEntity expression are documented
+    * README rewritten, in the shape of Ting's: quick tour, then a reference of the configuration, attributes, value resolver, user provider and UniqueEntity
     * UPGRADE-4.0.md: with Symfony Flex, switching from ccmbenchmark/ting_bundle removes the bundle from config/bundles.php, and how to restore it
     * README: configuration example for a Symfony application (was a Symfony 2 bundle layout), eraseCredentials() marked #[\Deprecated] (deprecated since Symfony 7.3, removed in 8), Ting's behaviour left to Ting's documentation
 
