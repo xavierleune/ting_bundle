@@ -1,4 +1,4 @@
-4.0.0 (unreleased):
+4.0.0 (2026-10-16):
     * default_connection and default_database options: used by the #[Table] attributes that omit connection or database (explicit values win); a #[Table] without repository throws a LogicException
     * Require xavierleune/ting ^4.0 (replaces ccmbenchmark/ting), see UPGRADE-4.0.md
     * Support Symfony 8, require Symfony ^7.4 || ^8.0
